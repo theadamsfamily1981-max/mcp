@@ -20,6 +20,8 @@ $(MODULE_NAME)-objs := \
 	kernel/snn_pipeline/snn_pipeline.o \
 	kernel/semantic_ai/snn_ai_engine_v2.o \
 	kernel/semantic_ai/snn_knowledge_graph.o \
+	kernel/semantic_ai/snn_csr_graph.o \
+	kernel/semantic_ai/snn_gnn.o \
 	kernel/observability/snn_hpc.o
 
 # Keep v1 for comparison (commented out)

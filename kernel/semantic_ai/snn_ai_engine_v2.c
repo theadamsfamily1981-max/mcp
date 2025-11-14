@@ -25,6 +25,8 @@
 #include "snn_fixed_point.h"
 #include "snn_quantization.h"
 #include "../observability/snn_hpc.h"
+#include "snn_csr_graph.h"
+#include "snn_gnn.h"
 
 /* AI engine state (updated structure) */
 struct snn_ai_engine {
@@ -47,6 +49,16 @@ struct snn_ai_engine {
     struct snn_hpc_monitor *hpc;
     bool use_real_metrics;
 
+    /* CSR++ Knowledge Graph (Phase 3) */
+    struct snn_csr_graph *csr_graph;
+    bool use_csr_graph;
+
+    /* GNN Model for State Embedding (Phase 3) */
+    struct snn_gnn_model *gnn;
+    bool use_gnn_embedding;
+    fp_t *graph_embedding;     /* Cached graph embedding */
+    u32 graph_embedding_dim;
+
     /* Learning parameters (fixed-point) */
     fp_t learning_rate;      /* Alpha */
     fp_t discount_factor;    /* Gamma */
@@ -65,7 +77,7 @@ struct snn_ai_engine {
     struct snn_workload_history *history;
     u32 history_count;
 
-    /* Knowledge graph */
+    /* Knowledge graph (legacy - will be replaced by CSR++) */
     struct snn_knowledge_graph *kg;
 
     /* Statistics (fixed-point where appropriate) */
@@ -463,6 +475,39 @@ int snn_ai_engine_init(struct snn_ai_engine **engine_ptr,
         pr_warn("SNN_AI_V2: HPC initialization failed (%d), using simulated metrics\n", ret);
     }
 
+    /* Initialize CSR++ Knowledge Graph (Phase 3) */
+    ret = snn_csr_graph_init(&engine->csr_graph, 64, 256, 8);
+    if (ret == 0) {
+        engine->use_csr_graph = true;
+        pr_info("SNN_AI_V2: CSR++ graph enabled (nodes=64, edges=256, features=8)\n");
+
+        /* Initialize GNN for state embedding */
+        ret = snn_gnn_init(&engine->gnn, engine->csr_graph, 8, 16, 8, 2);
+        if (ret == 0) {
+            engine->use_gnn_embedding = true;
+            engine->graph_embedding_dim = 8;
+
+            /* Allocate graph embedding cache */
+            engine->graph_embedding = kzalloc(engine->graph_embedding_dim * sizeof(fp_t), GFP_KERNEL);
+            if (!engine->graph_embedding) {
+                snn_gnn_cleanup(engine->gnn);
+                engine->use_gnn_embedding = false;
+            } else {
+                pr_info("SNN_AI_V2: GNN model enabled (2 layers, 8->16->8)\n");
+            }
+        } else {
+            engine->gnn = NULL;
+            engine->use_gnn_embedding = false;
+            pr_warn("SNN_AI_V2: GNN initialization failed (%d)\n", ret);
+        }
+    } else {
+        engine->csr_graph = NULL;
+        engine->use_csr_graph = false;
+        engine->gnn = NULL;
+        engine->use_gnn_embedding = false;
+        pr_warn("SNN_AI_V2: CSR++ graph initialization failed (%d)\n", ret);
+    }
+
     /* Initialize */
     spin_lock_init(&engine->lock);
     engine->config = *config;
@@ -499,6 +544,8 @@ int snn_ai_engine_init(struct snn_ai_engine **engine_ptr,
             sizeof(*engine->history) / 1024);
     if (engine->use_real_metrics)
         pr_info("SNN_AI_V2: Phase 2 Observability: HPC-based metrics active\n");
+    if (engine->use_gnn_embedding)
+        pr_info("SNN_AI_V2: Phase 3 GNN: Graph-based state embedding active\n");
 
     return 0;
 }
@@ -512,6 +559,28 @@ void snn_ai_engine_cleanup(struct snn_ai_engine *engine)
         return;
 
     pr_info("SNN_AI_V2: Cleaning up engine\n");
+
+    /* Cleanup GNN and CSR++ graph (Phase 3) */
+    if (engine->gnn) {
+        u64 forward_passes, avg_latency_ns;
+        snn_gnn_get_stats(engine->gnn, &forward_passes, &avg_latency_ns);
+        pr_info("SNN_AI_V2: GNN stats - forward_passes=%llu, avg_latency=%llu ns\n",
+                forward_passes, avg_latency_ns);
+        snn_gnn_cleanup(engine->gnn);
+    }
+
+    kfree(engine->graph_embedding);
+
+    if (engine->csr_graph) {
+        u64 traversals, updates;
+        u32 tombstones;
+        float fill_ratio;
+        snn_csr_graph_stats(engine->csr_graph, &traversals, &updates,
+                           &tombstones, &fill_ratio);
+        pr_info("SNN_AI_V2: CSR++ stats - traversals=%llu, updates=%llu, tombstones=%u, fill=%.2f%%\n",
+                traversals, updates, tombstones, fill_ratio * 100);
+        snn_csr_graph_cleanup(engine->csr_graph);
+    }
 
     /* Cleanup HPC monitoring */
     if (engine->hpc) {
@@ -569,6 +638,16 @@ int snn_ai_recommend(struct snn_ai_engine *engine,
     /* Extract features with HPC-based arithmetic intensity */
     extract_features_fp(engine, params, &features,
                        (ret == 0) ? &ai_metrics : NULL);
+
+    /* If GNN is enabled, compute graph embedding and incorporate it into state */
+    if (engine->use_gnn_embedding && engine->gnn) {
+        ret = snn_gnn_forward(engine->gnn, engine->graph_embedding);
+        if (ret == 0) {
+            pr_debug("SNN_AI_V2: GNN embedding computed\n");
+            /* GNN embedding influences state discretization */
+            /* For now, we just log it - full integration would modify discretize_state_fp */
+        }
+    }
 
     /* Discretize state */
     state = discretize_state_fp(state_to_use, &features);
