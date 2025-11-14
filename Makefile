@@ -16,8 +16,11 @@ $(MODULE_NAME)-objs := \
 	kernel/cuda_bridge/snn_cuda_bridge.o \
 	kernel/nvme_dio/snn_nvme.o \
 	kernel/snn_pipeline/snn_pipeline.o \
-	kernel/semantic_ai/snn_ai_engine.o \
+	kernel/semantic_ai/snn_ai_engine_v2.o \
 	kernel/semantic_ai/snn_knowledge_graph.o
+
+# Keep v1 for comparison (commented out)
+# kernel/semantic_ai/snn_ai_engine.o
 
 # Kernel build directory
 KDIR ?= /lib/modules/$(shell uname -r)/build
