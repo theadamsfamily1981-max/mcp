@@ -27,6 +27,7 @@
 #include "../observability/snn_hpc.h"
 #include "snn_csr_graph.h"
 #include "snn_gnn.h"
+#include "snn_cold_start.h"
 
 /* AI engine state (updated structure) */
 struct snn_ai_engine {
@@ -58,6 +59,10 @@ struct snn_ai_engine {
     bool use_gnn_embedding;
     fp_t *graph_embedding;     /* Cached graph embedding */
     u32 graph_embedding_dim;
+
+    /* Cold-Start Safety (Phase 4) */
+    struct snn_cold_start cold_start;
+    bool use_cold_start_safety;
 
     /* Learning parameters (fixed-point) */
     fp_t learning_rate;      /* Alpha */
@@ -535,6 +540,10 @@ int snn_ai_engine_init(struct snn_ai_engine **engine_ptr,
     engine->q_value_variance = 0;
     engine->convergence_checks = 0;
 
+    /* Initialize Cold-Start Safety (Phase 4) */
+    snn_cold_start_init(&engine->cold_start);
+    engine->use_cold_start_safety = true;
+
     engine->initialized = true;
     *engine_ptr = engine;
 
@@ -546,6 +555,8 @@ int snn_ai_engine_init(struct snn_ai_engine **engine_ptr,
         pr_info("SNN_AI_V2: Phase 2 Observability: HPC-based metrics active\n");
     if (engine->use_gnn_embedding)
         pr_info("SNN_AI_V2: Phase 3 GNN: Graph-based state embedding active\n");
+    if (engine->use_cold_start_safety)
+        pr_info("SNN_AI_V2: Phase 4 Cold-Start: Safety mechanisms enabled\n");
 
     return 0;
 }
@@ -580,6 +591,18 @@ void snn_ai_engine_cleanup(struct snn_ai_engine *engine)
         pr_info("SNN_AI_V2: CSR++ stats - traversals=%llu, updates=%llu, tombstones=%u, fill=%.2f%%\n",
                 traversals, updates, tombstones, fill_ratio * 100);
         snn_csr_graph_cleanup(engine->csr_graph);
+    }
+
+    /* Print cold-start statistics (Phase 4) */
+    if (engine->use_cold_start_safety) {
+        u64 fallback, learned, violations;
+        snn_cold_start_get_stats(&engine->cold_start, &fallback, &learned, &violations);
+        pr_info("SNN_AI_V2: Cold-start stats - fallback=%llu, learned=%llu, violations=%llu\n",
+                fallback, learned, violations);
+        pr_info("SNN_AI_V2: Final phase=%u, confidence=%d.%03d\n",
+                engine->cold_start.phase,
+                FP_TO_INT(engine->cold_start.policy_confidence),
+                FP_TO_FRAC(engine->cold_start.policy_confidence, 1000));
     }
 
     /* Cleanup HPC monitoring */
@@ -649,14 +672,31 @@ int snn_ai_recommend(struct snn_ai_engine *engine,
         }
     }
 
-    /* Discretize state */
-    state = discretize_state_fp(state_to_use, &features);
+    /* Check if we should use cold-start fallback (Phase 4) */
+    if (engine->use_cold_start_safety &&
+        snn_cold_start_should_use_fallback(&engine->cold_start)) {
+        /* Use conservative fallback policy */
+        snn_cold_start_fallback_allocation(&engine->cold_start, params,
+                                          &features, allocation);
+        pr_debug("SNN_AI_V2: Using cold-start fallback (phase=%u)\n",
+                 engine->cold_start.phase);
+    } else {
+        /* Use learned policy */
+        /* Discretize state */
+        state = discretize_state_fp(state_to_use, &features);
 
-    /* Select action using softmax (continuous policy!) */
-    action = select_action_epsilon_softmax(engine, state);
+        /* Select action using softmax (continuous policy!) */
+        action = select_action_epsilon_softmax(engine, state);
 
-    /* Decode action */
-    decode_action(action, allocation);
+        /* Decode action */
+        decode_action(action, allocation);
+
+        /* Apply safety constraints during cold-start */
+        if (engine->use_cold_start_safety)
+            snn_cold_start_apply_constraints(&engine->cold_start, allocation);
+
+        atomic64_inc(&engine->cold_start.learned_decisions);
+    }
 
     /* Calculate neuron allocation */
     allocation->gpu_neurons = (params->num_neurons * allocation->use_gpu) / 100;
@@ -726,6 +766,10 @@ int snn_ai_feedback(struct snn_ai_engine *engine,
         atomic64_inc(&engine->successful_decisions);
 
     atomic64_inc(&engine->learning_iterations);
+
+    /* Update cold-start state (Phase 4) */
+    if (engine->use_cold_start_safety)
+        snn_cold_start_update(&engine->cold_start, engine->q_value_variance);
 
     /* Check convergence every 100 iterations */
     engine->convergence_checks++;

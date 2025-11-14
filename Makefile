@@ -22,6 +22,7 @@ $(MODULE_NAME)-objs := \
 	kernel/semantic_ai/snn_knowledge_graph.o \
 	kernel/semantic_ai/snn_csr_graph.o \
 	kernel/semantic_ai/snn_gnn.o \
+	kernel/semantic_ai/snn_cold_start.o \
 	kernel/observability/snn_hpc.o
 
 # Keep v1 for comparison (commented out)
