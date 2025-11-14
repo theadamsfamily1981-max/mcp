@@ -11,13 +11,16 @@ obj-m := $(MODULE_NAME).o
 $(MODULE_NAME)-objs := \
 	kernel/core/snn_core.o \
 	kernel/pcie/snn_pcie.o \
+	kernel/pcie/snn_fpga_hpc.o \
 	kernel/memory/snn_memory.o \
 	kernel/rt_sched/snn_rt_sched.o \
 	kernel/cuda_bridge/snn_cuda_bridge.o \
+	kernel/cuda_bridge/snn_cuda_hpc.o \
 	kernel/nvme_dio/snn_nvme.o \
 	kernel/snn_pipeline/snn_pipeline.o \
 	kernel/semantic_ai/snn_ai_engine_v2.o \
-	kernel/semantic_ai/snn_knowledge_graph.o
+	kernel/semantic_ai/snn_knowledge_graph.o \
+	kernel/observability/snn_hpc.o
 
 # Keep v1 for comparison (commented out)
 # kernel/semantic_ai/snn_ai_engine.o

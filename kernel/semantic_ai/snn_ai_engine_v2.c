@@ -24,6 +24,7 @@
 #include "snn_ai_internal.h"
 #include "snn_fixed_point.h"
 #include "snn_quantization.h"
+#include "../observability/snn_hpc.h"
 
 /* AI engine state (updated structure) */
 struct snn_ai_engine {
@@ -41,6 +42,10 @@ struct snn_ai_engine {
     /* Optional: Compressed LUT for sparse environments */
     struct compressed_lut *clut;
     bool use_clut;
+
+    /* Hardware Performance Counter monitor (Phase 2) */
+    struct snn_hpc_monitor *hpc;
+    bool use_real_metrics;
 
     /* Learning parameters (fixed-point) */
     fp_t learning_rate;      /* Alpha */
@@ -79,10 +84,12 @@ struct snn_ai_engine {
 };
 
 /*
- * Extract workload features with fixed-point precision
+ * Extract workload features with fixed-point precision and real HPC data
  */
-static void extract_features_fp(const snn_compute_params_t *params,
-                               snn_workload_features_t *features)
+static void extract_features_fp(struct snn_ai_engine *engine,
+                               const snn_compute_params_t *params,
+                               snn_workload_features_t *features,
+                               struct snn_arithmetic_intensity *ai_metrics)
 {
     u64 synapses_per_neuron;
     u64 max_synapses;
@@ -105,18 +112,80 @@ static void extract_features_fp(const snn_compute_params_t *params,
         }
     }
 
-    /* Computation intensity */
-    synapses_per_neuron = params->num_synapses / max(params->num_neurons, 1u);
-    features->computation_intensity = (float)synapses_per_neuron * 2.0f;
+    /* Computation intensity - use real HPC data if available */
+    if (ai_metrics && ai_metrics->mem_bytes > 0) {
+        /* Real Arithmetic Intensity from HPC */
+        features->computation_intensity = (float)ai_metrics->ai_ratio / 1000.0f;
+        pr_debug("SNN_AI: Real AI from HPC = %.3f FLOPs/byte\n",
+                 features->computation_intensity);
+    } else {
+        /* Fallback: estimate from workload parameters */
+        synapses_per_neuron = params->num_synapses / max(params->num_neurons, 1u);
+        features->computation_intensity = (float)synapses_per_neuron * 2.0f;
+    }
 
     /* Data size */
     features->data_size = (u64)params->num_synapses * sizeof(float) +
                          (u64)params->num_neurons * params->timesteps;
 
-    /* Memory bandwidth estimate */
-    features->memory_bandwidth_req = (u32)(features->data_size / 10);
+    /* Memory bandwidth - use real HPC data if available */
+    if (ai_metrics && ai_metrics->mem_bytes > 0) {
+        features->memory_bandwidth_req = (u32)(ai_metrics->mem_bytes / 1000);
+    } else {
+        features->memory_bandwidth_req = (u32)(features->data_size / 10);
+    }
 
     features->is_sequential = (params->timesteps > 100) ? 1 : 0;
+}
+
+/*
+ * Collect real system state from Hardware Performance Counters
+ *
+ * This replaces simulated/estimated metrics with actual hardware measurements
+ * for accurate AI decision-making.
+ */
+static int collect_system_state_hpc(struct snn_ai_engine *engine,
+                                   snn_system_state_t *sys_state,
+                                   struct snn_arithmetic_intensity *ai_metrics)
+{
+    struct snn_system_metrics hpc_metrics;
+    int ret;
+
+    /* If HPC not available, return error to use fallback */
+    if (!engine->hpc || !engine->use_real_metrics)
+        return -ENODEV;
+
+    /* Collect HPC metrics (target: <500ns) */
+    ret = snn_hpc_collect(engine->hpc, &hpc_metrics);
+    if (ret < 0) {
+        pr_debug("SNN_AI: HPC collection failed: %d\n", ret);
+        return ret;
+    }
+
+    /* Convert HPC metrics to system state */
+    sys_state->gpu_utilization = hpc_metrics.gpu.sm_active_cycles;
+    sys_state->fpga_utilization = hpc_metrics.fpga.lut_utilization;
+
+    /* Memory info - would come from device queries in real implementation */
+    sys_state->gpu_memory_free = 6ULL * 1024 * 1024 * 1024;  /* TODO: Real query */
+    sys_state->fpga_memory_free = 4ULL * 1024 * 1024 * 1024; /* TODO: Real query */
+
+    /* PCIe bandwidth from HPC */
+    sys_state->pcie_bandwidth_used = (u32)(hpc_metrics.pcie_bandwidth_used / (1024 * 1024));
+
+    /* RT deadline misses - tracked separately */
+    sys_state->rt_deadline_miss_rate = hpc_metrics.rt_deadline_misses;
+
+    /* Copy arithmetic intensity metrics */
+    if (ai_metrics)
+        memcpy(ai_metrics, &hpc_metrics.ai, sizeof(*ai_metrics));
+
+    pr_debug("SNN_AI_HPC: GPU=%u%% FPGA=%u%% AI=%u.%03u collection_time=%llu ns\n",
+             sys_state->gpu_utilization, sys_state->fpga_utilization,
+             hpc_metrics.ai.ai_ratio / 1000, hpc_metrics.ai.ai_ratio % 1000,
+             hpc_metrics.collection_time_ns);
+
+    return 0;
 }
 
 /*
@@ -383,6 +452,17 @@ int snn_ai_engine_init(struct snn_ai_engine **engine_ptr,
     /* Build initial knowledge base */
     snn_kg_build_initial_kb(engine->kg);
 
+    /* Initialize Hardware Performance Counter monitoring (Phase 2) */
+    ret = snn_hpc_init(&engine->hpc);
+    if (ret == 0) {
+        engine->use_real_metrics = true;
+        pr_info("SNN_AI_V2: HPC monitoring enabled\n");
+    } else {
+        engine->hpc = NULL;
+        engine->use_real_metrics = false;
+        pr_warn("SNN_AI_V2: HPC initialization failed (%d), using simulated metrics\n", ret);
+    }
+
     /* Initialize */
     spin_lock_init(&engine->lock);
     engine->config = *config;
@@ -417,6 +497,8 @@ int snn_ai_engine_init(struct snn_ai_engine **engine_ptr,
     pr_info("SNN_AI_V2: Memory: Q-table=%zu KB, History=%zu KB\n",
             sizeof(*engine->q_table) / 1024,
             sizeof(*engine->history) / 1024);
+    if (engine->use_real_metrics)
+        pr_info("SNN_AI_V2: Phase 2 Observability: HPC-based metrics active\n");
 
     return 0;
 }
@@ -430,6 +512,15 @@ void snn_ai_engine_cleanup(struct snn_ai_engine *engine)
         return;
 
     pr_info("SNN_AI_V2: Cleaning up engine\n");
+
+    /* Cleanup HPC monitoring */
+    if (engine->hpc) {
+        u64 total_samples, avg_overhead_ns;
+        snn_hpc_get_stats(engine->hpc, &total_samples, &avg_overhead_ns);
+        pr_info("SNN_AI_V2: HPC stats - samples=%llu, avg_overhead=%llu ns\n",
+                total_samples, avg_overhead_ns);
+        snn_hpc_cleanup(engine->hpc);
+    }
 
     if (engine->clut)
         snn_clut_cleanup(engine->clut);
@@ -449,8 +540,12 @@ int snn_ai_recommend(struct snn_ai_engine *engine,
                     snn_ai_allocation_t *allocation)
 {
     snn_workload_features_t features;
+    struct snn_arithmetic_intensity ai_metrics = {0};
+    snn_system_state_t real_sys_state;
+    const snn_system_state_t *state_to_use;
     u32 state, action;
     u64 start_ns, end_ns;
+    int ret;
 
     if (!engine || !engine->initialized || !params || !allocation)
         return -EINVAL;
@@ -459,11 +554,24 @@ int snn_ai_recommend(struct snn_ai_engine *engine,
 
     memset(allocation, 0, sizeof(*allocation));
 
-    /* Extract features (fixed-point) */
-    extract_features_fp(params, &features);
+    /* Try to collect real system state from HPC */
+    ret = collect_system_state_hpc(engine, &real_sys_state, &ai_metrics);
+    if (ret == 0) {
+        /* Use real HPC data */
+        state_to_use = &real_sys_state;
+        pr_debug("SNN_AI_V2: Using real HPC metrics (AI=%.3f)\n",
+                 (float)ai_metrics.ai_ratio / 1000.0f);
+    } else {
+        /* Fall back to provided system state */
+        state_to_use = sys_state;
+    }
+
+    /* Extract features with HPC-based arithmetic intensity */
+    extract_features_fp(engine, params, &features,
+                       (ret == 0) ? &ai_metrics : NULL);
 
     /* Discretize state */
-    state = discretize_state_fp(sys_state, &features);
+    state = discretize_state_fp(state_to_use, &features);
 
     /* Select action using softmax (continuous policy!) */
     action = select_action_epsilon_softmax(engine, state);
@@ -501,8 +609,12 @@ int snn_ai_feedback(struct snn_ai_engine *engine,
                    const snn_ai_feedback_t *feedback)
 {
     snn_workload_features_t features;
+    struct snn_arithmetic_intensity ai_metrics = {0};
+    snn_system_state_t real_sys_state;
+    const snn_system_state_t *state_to_use;
     fp_t reward;
     u32 next_state;
+    int ret;
 
     if (!engine || !engine->initialized || !feedback)
         return -EINVAL;
@@ -518,9 +630,14 @@ int snn_ai_feedback(struct snn_ai_engine *engine,
     engine->cumulative_reward = fp_add(engine->cumulative_reward, reward);
     spin_unlock(&engine->lock);
 
-    /* Get next state */
-    extract_features_fp(params, &features);
-    next_state = discretize_state_fp(sys_state, &features);
+    /* Try to collect real system state from HPC */
+    ret = collect_system_state_hpc(engine, &real_sys_state, &ai_metrics);
+    state_to_use = (ret == 0) ? &real_sys_state : sys_state;
+
+    /* Get next state with HPC metrics */
+    extract_features_fp(engine, params, &features,
+                       (ret == 0) ? &ai_metrics : NULL);
+    next_state = discretize_state_fp(state_to_use, &features);
 
     /* Update Q-table with EMA smoothing */
     update_q_table_ema(engine, engine->current_state, engine->last_action,
