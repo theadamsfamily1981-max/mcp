@@ -23,6 +23,7 @@ struct snn_rt_scheduler;
 struct snn_cuda_bridge;
 struct snn_nvme_manager;
 struct snn_pipeline;
+struct snn_ai_engine;
 
 /*
  * PCIe Subsystem
@@ -189,10 +190,19 @@ struct snn_pipeline {
     struct snn_pcie_manager *pcie_mgr;
     struct snn_memory_manager *mem_mgr;
     struct snn_cuda_bridge *cuda_bridge;
+
+    /* AI engine */
+    struct snn_ai_engine *ai_engine;
 };
 
 int snn_pipeline_init(struct snn_pipeline *pipeline, const snn_kernel_init_t *config);
 void snn_pipeline_cleanup(struct snn_pipeline *pipeline);
 int snn_pipeline_execute(struct snn_pipeline *pipeline, const snn_compute_params_t *params);
+
+/*
+ * Semantic AI Engine
+ */
+int snn_ai_init(struct snn_ai_engine **engine, const struct snn_ai_config *config);
+void snn_ai_cleanup(struct snn_ai_engine *engine);
 
 #endif /* _SNN_CORE_H */
