@@ -543,6 +543,206 @@ rare_part_keywords:
   - "coax"
   - "bnc"
 
+  # ===========================================
+  # HIDDEN GOLD: CRYPTO MINING HARDWARE
+  # ===========================================
+  # Mining rigs often have multiple high-end GPUs
+  - "mining rig"
+  - "gpu mining"
+  - "crypto mining"
+  - "ethereum mining"
+  - "mining frame"
+  - "8 gpu rig"
+  - "6 gpu rig"
+  - "mining motherboard"
+  - "b250 mining"
+  - "h110 btc"
+  # FPGA miners (valuable FPGAs inside)
+  - "fpga miner"
+  - "blackminer"
+  - "sqrl"
+  - "cvp-13"
+  - "bcu-1525"
+  - "vcu1525"
+  # ASICs (can harvest heatsinks, fans, PSUs)
+  - "antminer"
+  - "whatsminer"
+  - "avalon miner"
+  - "innosilicon"
+
+  # ===========================================
+  # HIDDEN GOLD: NETWORKING EQUIPMENT
+  # ===========================================
+  # High-end switches often have FPGAs/ASICs
+  - "arista"
+  - "arista 7050"
+  - "arista 7060"
+  - "arista 7280"
+  - "cisco nexus"
+  - "nexus 9000"
+  - "nexus 7000"
+  - "juniper mx"
+  - "juniper qfx"
+  # Network cards with FPGAs
+  - "solarflare"
+  - "xilinx solarflare"
+  - "exablaze"
+  - "napatech"
+  - "smartnic"
+  - "bluefield dpu"
+  - "pensando"
+  - "fungible"
+
+  # ===========================================
+  # HIDDEN GOLD: TEST & MEASUREMENT
+  # ===========================================
+  # Oscilloscopes and analyzers have premium FPGAs
+  - "tektronix"
+  - "keysight"
+  - "agilent"
+  - "rohde schwarz"
+  - "lecroy"
+  - "rigol"
+  - "logic analyzer"
+  - "spectrum analyzer"
+  - "signal generator"
+  - "oscilloscope parts"
+  - "oscilloscope board"
+  # SDR equipment
+  - "usrp"
+  - "ettus"
+  - "lime sdr"
+  - "hackrf"
+  - "rtl-sdr"
+  - "adalm pluto"
+
+  # ===========================================
+  # HIDDEN GOLD: INDUSTRIAL & EMBEDDED
+  # ===========================================
+  # PLC and industrial controllers
+  - "plc module"
+  - "siemens plc"
+  - "allen bradley"
+  - "rockwell automation"
+  - "beckhoff"
+  - "national instruments"
+  - "ni pxi"
+  - "ni crio"
+  - "compactrio"
+  # Machine vision
+  - "machine vision"
+  - "basler camera"
+  - "flir camera"
+  - "cognex"
+  - "keyence"
+  # Motion control
+  - "servo drive"
+  - "galil"
+  - "elmo drive"
+
+  # ===========================================
+  # HIDDEN GOLD: TELECOM EQUIPMENT
+  # ===========================================
+  # Base stations and telecom gear have DSPs/FPGAs
+  - "base station"
+  - "bts equipment"
+  - "ericsson rbs"
+  - "nokia flexi"
+  - "huawei bts"
+  - "small cell"
+  - "femtocell"
+  # Telecom cards
+  - "telecom blade"
+  - "atca blade"
+  - "advancedtca"
+  - "microtca"
+  - "amc module"
+  - "cpci board"
+  - "compactpci"
+  - "vme board"
+  - "vmeboard"
+  - "vxs"
+
+  # ===========================================
+  # HIDDEN GOLD: MEDICAL IMAGING
+  # ===========================================
+  # Medical equipment has serious silicon
+  - "ultrasound board"
+  - "ct scanner parts"
+  - "mri parts"
+  - "medical imaging"
+  - "philips medical"
+  - "ge healthcare"
+  - "siemens healthineers"
+
+  # ===========================================
+  # HIDDEN GOLD: AEROSPACE & DEFENSE SURPLUS
+  # ===========================================
+  - "mil-spec"
+  - "military surplus electronics"
+  - "rugged computer"
+  - "conduction cooled"
+  - "vpx board"
+  - "openvpx"
+  - "cpci serial"
+  - "arinc 653"
+  - "do-254"
+
+  # ===========================================
+  # UNIVERSITY & RESEARCH LAB SURPLUS
+  # ===========================================
+  - "university surplus"
+  - "lab surplus"
+  - "research equipment"
+  - "scientific equipment"
+  - "lab liquidation"
+  - "university liquidation"
+
+  # ===========================================
+  # HIGH-VALUE CONNECTORS (For DIY Carriers)
+  # ===========================================
+  - "samtec searay"
+  - "samtec qsh"
+  - "samtec qth"
+  - "samtec bsh"
+  - "samtec tiger"
+  - "hirose df40"
+  - "hirose fx23"
+  - "molex slimstack"
+  - "amphenol"
+  - "fmc lpc"
+  - "fmc hpc"
+  - "vita 57"
+
+  # ===========================================
+  # MEMORY MODULES (High-Value Server RAM)
+  # ===========================================
+  - "hbm"
+  - "hbm2"
+  - "hbm2e"
+  - "hbm3"
+  - "gddr6x"
+  - "gddr6"
+  - "lrdimm"
+  - "3ds rdimm"
+  - "nvdimm"
+  - "optane dimm"
+  - "persistent memory"
+
+  # ===========================================
+  # POWER DELIVERY (For Custom Builds)
+  # ===========================================
+  - "server psu"
+  - "hp psu"
+  - "dell psu"
+  - "supermicro psu"
+  - "platinum psu"
+  - "titanium psu"
+  - "breakout board psu"
+  - "gpu power cable"
+  - "pcie riser"
+  - "powered riser"
+
 # Alert Configuration
 alerts:
   enabled: true
@@ -632,6 +832,36 @@ alerts:
     - "groq"
     - "google tpu"
     - "pentium pro 200"
+
+    # HIDDEN GOLD ALERTS
+    # FPGA Mining Cards (Premium FPGAs inside)
+    - "vcu1525"
+    - "bcu-1525"
+    - "cvp-13"
+    - "sqrl"
+
+    # SmartNICs with FPGAs
+    - "solarflare"
+    - "napatech"
+    - "bluefield dpu"
+    - "pensando"
+
+    # Test Equipment (Often has Virtex/Kintex)
+    - "usrp"
+    - "ettus"
+    - "ni pxi"
+    - "compactrio"
+
+    # Telecom Blades (Premium silicon)
+    - "atca blade"
+    - "advancedtca"
+    - "microtca"
+    - "amc module"
+
+    # Multi-GPU Mining Rigs
+    - "8 gpu rig"
+    - "6 gpu rig"
+    - "mining rig"
 
 # Scraper Source Configuration
 sources:

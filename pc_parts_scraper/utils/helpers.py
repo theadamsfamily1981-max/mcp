@@ -389,6 +389,72 @@ def calculate_rarity_score(
         if gpu in text:
             score += 15
 
+    # ===========================================
+    # HIDDEN GOLD: FPGA MINING CARDS
+    # ===========================================
+    fpga_miners = [
+        'vcu1525', 'bcu-1525', 'cvp-13', 'sqrl', 'blackminer',
+        'fpga miner'
+    ]
+    for miner in fpga_miners:
+        if miner in text:
+            score += 20  # Premium FPGAs inside
+
+    # ===========================================
+    # HIDDEN GOLD: SMARTNICS & NETWORK FPGAS
+    # ===========================================
+    smartnics = [
+        'solarflare', 'napatech', 'bluefield', 'pensando', 'exablaze',
+        'smartnic', 'fungible'
+    ]
+    for nic in smartnics:
+        if nic in text:
+            score += 15
+
+    # ===========================================
+    # HIDDEN GOLD: TEST & MEASUREMENT
+    # ===========================================
+    test_equipment = [
+        'usrp', 'ettus', 'ni pxi', 'compactrio', 'ni crio',
+        'adalm pluto', 'lime sdr'
+    ]
+    for equip in test_equipment:
+        if equip in text:
+            score += 15
+
+    # ===========================================
+    # HIDDEN GOLD: TELECOM BLADES
+    # ===========================================
+    telecom_blades = [
+        'atca blade', 'advancedtca', 'microtca', 'amc module',
+        'cpci board', 'compactpci', 'vme board', 'vpx board', 'openvpx'
+    ]
+    for blade in telecom_blades:
+        if blade in text:
+            score += 15
+
+    # ===========================================
+    # HIDDEN GOLD: MULTI-GPU SYSTEMS
+    # ===========================================
+    multi_gpu = [
+        '8 gpu', '6 gpu', '4 gpu', 'mining rig', 'gpu rig',
+        'crypto mining', 'ethereum mining'
+    ]
+    for mg in multi_gpu:
+        if mg in text:
+            score += 10
+
+    # ===========================================
+    # HIDDEN GOLD: INDUSTRIAL EQUIPMENT
+    # ===========================================
+    industrial = [
+        'beckhoff', 'national instruments', 'cognex', 'keyence',
+        'basler camera', 'machine vision'
+    ]
+    for ind in industrial:
+        if ind in text:
+            score += 10
+
     # Category bonus
     if category in ['fpga', 'gpu_datacenter', 'ai_accelerator']:
         score += 10
