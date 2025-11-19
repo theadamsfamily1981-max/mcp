@@ -1,0 +1,247 @@
+# PC Parts Scraper Configuration
+# ================================
+
+# General Settings
+general:
+  user_agent_rotation: true
+  request_timeout: 30
+  max_retries: 3
+  retry_delay: 5
+  concurrent_requests: 10
+  respect_robots_txt: true
+
+# Database
+database:
+  type: sqlite
+  path: data/pc_parts.db
+
+# Proxy Settings
+proxy:
+  enabled: false
+  rotation: true
+  pool:
+    - "http://proxy1:8080"
+    - "http://proxy2:8080"
+    - "socks5://proxy3:1080"
+
+# Rate Limiting (requests per minute per domain)
+rate_limits:
+  default: 30
+  ebay.com: 20
+  craigslist.org: 10
+  govplanet.com: 15
+
+# Search Categories
+pc_parts_categories:
+  - cpu
+  - gpu
+  - motherboard
+  - ram
+  - storage
+  - psu
+  - case
+  - cooling
+  - peripheral
+  - cable
+  - adapter
+  - legacy
+  - rare
+
+# Keywords for rare/vintage parts
+rare_part_keywords:
+  # Vintage CPUs
+  - "3dfx"
+  - "voodoo"
+  - "pentium pro"
+  - "pentium mmx"
+  - "athlon xp"
+  - "slot 1"
+  - "slot a"
+  - "socket 7"
+  - "socket 370"
+  - "socket 478"
+  - "socket 939"
+  - "socket 754"
+
+  # Vintage GPUs
+  - "geforce 256"
+  - "geforce2"
+  - "geforce3"
+  - "geforce4"
+  - "radeon 9800"
+  - "radeon x800"
+  - "matrox"
+  - "s3 virge"
+  - "riva tnt"
+
+  # Vintage RAM
+  - "sdram"
+  - "rdram"
+  - "rambus"
+  - "edo ram"
+  - "simm"
+  - "dimm pc100"
+  - "dimm pc133"
+  - "ddr1"
+  - "ddr2 800"
+
+  # Vintage Storage
+  - "ide"
+  - "pata"
+  - "scsi"
+  - "zip drive"
+  - "jaz drive"
+  - "mfm"
+  - "rll"
+
+  # Rare/Specialty
+  - "server pull"
+  - "engineering sample"
+  - "es chip"
+  - "xeon phi"
+  - "nvidia quadro"
+  - "firepro"
+  - "tesla gpu"
+
+  # Legacy Interfaces
+  - "agp"
+  - "pci"
+  - "isa"
+  - "vesa"
+  - "mca"
+  - "eisa"
+
+  # Vintage Sound
+  - "sound blaster"
+  - "creative labs"
+  - "gravis ultrasound"
+  - "roland mt-32"
+  - "adlib"
+
+  # Vintage Network
+  - "3com"
+  - "token ring"
+  - "arcnet"
+  - "coax"
+  - "bnc"
+
+# Alert Configuration
+alerts:
+  enabled: true
+  channels:
+    discord:
+      enabled: false
+      webhook_url: ""
+    slack:
+      enabled: false
+      webhook_url: ""
+    email:
+      enabled: false
+      smtp_server: ""
+      smtp_port: 587
+      username: ""
+      password: ""
+      recipients: []
+
+  # Price thresholds for alerts
+  price_alerts:
+    # Alert if rare GPU under this price
+    vintage_gpu_max: 50.00
+    vintage_cpu_max: 30.00
+    rare_motherboard_max: 100.00
+
+  # Keyword alerts - notify immediately when found
+  instant_alert_keywords:
+    - "3dfx voodoo 5"
+    - "voodoo 5 6000"
+    - "pentium pro 200"
+    - "xeon phi"
+    - "nvidia tesla"
+
+# Scraper Source Configuration
+sources:
+  # Surplus & Junk
+  surplus:
+    enabled: true
+    sites:
+      - name: "govplanet"
+        url: "https://www.govplanet.com"
+        category: "government_surplus"
+      - name: "publicsurplus"
+        url: "https://www.publicsurplus.com"
+        category: "government_surplus"
+      - name: "gsaauctions"
+        url: "https://gsaauctions.gov"
+        category: "government_surplus"
+      - name: "propertyroom"
+        url: "https://www.propertyroom.com"
+        category: "police_surplus"
+
+  # Discount & Overstock
+  discount:
+    enabled: true
+    sites:
+      - name: "woot"
+        url: "https://computers.woot.com"
+        category: "overstock"
+      - name: "newegg_open_box"
+        url: "https://www.newegg.com/open-box"
+        category: "open_box"
+      - name: "microcenter_clearance"
+        url: "https://www.microcenter.com/search/search_results.aspx?Ntk=all&N=4294966998"
+        category: "clearance"
+      - name: "amazon_warehouse"
+        url: "https://www.amazon.com/Warehouse-Deals"
+        category: "warehouse"
+
+  # Used Marketplaces
+  used:
+    enabled: true
+    sites:
+      - name: "ebay"
+        url: "https://www.ebay.com"
+        category: "auction"
+      - name: "mercari"
+        url: "https://www.mercari.com"
+        category: "marketplace"
+      - name: "offerup"
+        url: "https://offerup.com"
+        category: "local"
+      - name: "facebook_marketplace"
+        url: "https://www.facebook.com/marketplace"
+        category: "local"
+        requires_auth: true
+
+  # Electronics Recyclers
+  recycler:
+    enabled: true
+    sites:
+      - name: "freegeek"
+        url: "https://www.freegeek.org"
+        category: "recycler"
+      - name: "interconnection"
+        url: "https://interconnection.org"
+        category: "recycler"
+
+  # Liquidation
+  liquidation:
+    enabled: true
+    sites:
+      - name: "liquidation"
+        url: "https://www.liquidation.com"
+        category: "liquidation"
+      - name: "bstock"
+        url: "https://bstock.com"
+        category: "b2b_liquidation"
+      - name: "directliquidation"
+        url: "https://www.directliquidation.com"
+        category: "liquidation"
+
+# Scheduling
+schedule:
+  # How often to run full scrapes
+  full_scrape_interval: "6h"
+  # How often to check for price drops
+  price_check_interval: "1h"
+  # How often to check instant alert keywords
+  rare_item_check_interval: "15m"
