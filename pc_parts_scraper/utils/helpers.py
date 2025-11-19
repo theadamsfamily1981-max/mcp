@@ -325,6 +325,48 @@ def calculate_rarity_score(
             score += 10
 
     # ===========================================
+    # MODULAR FPGA SALVAGE GOLD (SOMs - Best Value)
+    # ===========================================
+    # These are the real finds - high-end silicon on removable modules
+    premium_soms = [
+        'te0803', 'te0807', 'te0808', 'trenz',
+        'acu3eg', 'acu2cg', 'alinx',
+        'zu3eg', 'zu7ev', 'zu9eg', 'zu15eg', 'zu19eg',
+        'kria k26', 'kria som',
+        'enclustra mercury', 'mercury xu',
+        'ultra96', 'microzed', 'picozed'
+    ]
+    for som in premium_soms:
+        if som in text:
+            score += 20  # High value - cheap silicon
+
+    # Zynq UltraScale+ MPSoC chips (The Gold Standard)
+    mpsoc_chips = [
+        'zynq ultrascale', 'mpsoc', 'zu2cg', 'zu4ev', 'zu5ev'
+    ]
+    for chip in mpsoc_chips:
+        if chip in text:
+            score += 15
+
+    # Budget Zynq-7000 SOMs (Still good value)
+    budget_soms = [
+        'z7020', 'z7045', 'zynq 7000', 'zedboard', 'arty z7',
+        'pynq', 'basys', 'nexys', 'cmod'
+    ]
+    for som in budget_soms:
+        if som in text:
+            score += 10
+
+    # Official eval boards (often heavily discounted)
+    eval_boards = [
+        'zcu102', 'zcu104', 'zcu106', 'zcu111',
+        'vcu118', 'vcu128', 'kcu105', 'kcu116'
+    ]
+    for board in eval_boards:
+        if board in text:
+            score += 15
+
+    # ===========================================
     # AI ACCELERATORS (Major bonus)
     # ===========================================
     ai_accelerators = [

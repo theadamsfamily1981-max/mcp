@@ -275,6 +275,115 @@ rare_part_keywords:
   - "numato fpga"
 
   # ===========================================
+  # MODULAR FPGA SALVAGE GOLD (SOMs & Modules)
+  # ===========================================
+
+  # Trenz Electronic SOMs (Premium Zynq UltraScale+)
+  - "trenz te0803"
+  - "trenz te0807"
+  - "trenz te0808"
+  - "trenz te0820"
+  - "trenz som"
+  - "trenz module"
+  - "trenz zynq"
+  - "trenz ultrascale"
+
+  # ALINX SOMs (Chinese Premium - Great Value)
+  - "alinx acu3eg"
+  - "alinx acu2cg"
+  - "alinx som"
+  - "alinx module"
+  - "alinx zynq"
+  - "alinx ultrascale"
+  - "alinx fpga"
+
+  # Avnet/96Boards Ecosystem
+  - "ultra96"
+  - "ultra96-v2"
+  - "avnet ultra96"
+  - "96boards"
+  - "avnet zynq"
+  - "avnet som"
+  - "minized"
+  - "microzed"
+  - "picozed"
+  - "uzed"
+
+  # Enclustra SOMs (Swiss Premium)
+  - "enclustra mercury"
+  - "enclustra mars"
+  - "enclustra cosmos"
+  - "mercury xu"
+  - "mercury+ xu"
+  - "mars xu"
+
+  # Xilinx/AMD Official SOMs
+  - "kria som"
+  - "kria k26"
+  - "kria kv260"
+  - "kria kr260"
+  - "xilinx som"
+  - "zynq som"
+
+  # Zynq UltraScale+ MPSoC Specific (The Gold)
+  - "zu3eg"
+  - "zu2cg"
+  - "zu4ev"
+  - "zu5ev"
+  - "zu7ev"
+  - "zu9eg"
+  - "zu15eg"
+  - "zu19eg"
+  - "zynq ultrascale mpsoc"
+  - "mpsoc som"
+  - "mpsoc module"
+
+  # Zynq-7000 SOMs (Budget Option)
+  - "z7020"
+  - "z7010"
+  - "z7015"
+  - "z7045"
+  - "zynq 7000 som"
+  - "zynq 7020"
+  - "zynq 7045"
+
+  # SOM Carriers & Breakouts (The Cheap Infrastructure)
+  - "som carrier"
+  - "som baseboard"
+  - "carrier board fpga"
+  - "breakout board fpga"
+  - "mezzanine connector"
+  - "fmc carrier"
+  - "fmc+ carrier"
+  - "samtec connector"
+  - "highspeed connector"
+
+  # Module Form Factors
+  - "sodimm fpga"
+  - "so-dimm module"
+  - "com express"
+  - "qseven module"
+  - "smarc module"
+
+  # Specific Eval Boards (Often Discounted)
+  - "zcu102"
+  - "zcu104"
+  - "zcu106"
+  - "zcu111"
+  - "vcu118"
+  - "vcu128"
+  - "kcu105"
+  - "kcu116"
+  - "zedboard"
+  - "arty z7"
+  - "pynq"
+  - "pynq-z1"
+  - "pynq-z2"
+  - "cmod"
+  - "basys"
+  - "nexys"
+
+  # ===========================================
   # VINTAGE GPUs (Classic/Collector)
   # ===========================================
   - "3dfx"
@@ -500,6 +609,20 @@ alerts:
     - "agilex 7"
     - "versal ai core"
     - "versal premium"
+
+    # MODULAR FPGA SALVAGE GOLD (Best Value Targets)
+    - "trenz te0803"
+    - "trenz te0807"
+    - "alinx acu3eg"
+    - "alinx acu2cg"
+    - "ultra96-v2"
+    - "kria k26"
+    - "zu3eg"
+    - "zu7ev"
+    - "zu9eg"
+    - "enclustra mercury"
+    - "zcu102"
+    - "zcu104"
 
     # Other High Value
     - "xeon phi"
