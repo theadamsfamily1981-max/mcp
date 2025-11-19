@@ -35,6 +35,10 @@ rate_limits:
 pc_parts_categories:
   - cpu
   - gpu
+  - gpu_datacenter
+  - gpu_professional
+  - fpga
+  - ai_accelerator
   - motherboard
   - ram
   - storage
@@ -44,17 +48,302 @@ pc_parts_categories:
   - peripheral
   - cable
   - adapter
+  - network
   - legacy
   - rare
 
 # Keywords for rare/vintage parts
 rare_part_keywords:
-  # Vintage CPUs
+  # ===========================================
+  # RARE & HIGH-END NVIDIA GPUs
+  # ===========================================
+
+  # NVIDIA Data Center / Compute GPUs (ULTRA RARE)
+  - "nvidia h100"
+  - "nvidia h200"
+  - "nvidia a100"
+  - "nvidia a800"
+  - "nvidia a30"
+  - "nvidia a40"
+  - "nvidia a10"
+  - "nvidia a16"
+  - "nvidia l40"
+  - "nvidia l4"
+  - "tesla v100"
+  - "tesla p100"
+  - "tesla p40"
+  - "tesla p4"
+  - "tesla k80"
+  - "tesla k40"
+  - "tesla k20"
+  - "tesla m40"
+  - "tesla m60"
+  - "nvidia dgx"
+  - "nvlink bridge"
+  - "sxm2"
+  - "sxm4"
+  - "sxm5"
+
+  # NVIDIA Quadro Professional (Rare)
+  - "quadro rtx 8000"
+  - "quadro rtx 6000"
+  - "quadro rtx 5000"
+  - "quadro rtx 4000"
+  - "quadro gv100"
+  - "quadro gp100"
+  - "quadro p6000"
+  - "quadro p5000"
+  - "quadro m6000"
+  - "quadro k6000"
+  - "quadro k5200"
+  - "rtx a6000"
+  - "rtx a5500"
+  - "rtx a5000"
+  - "rtx a4500"
+  - "rtx a4000"
+  - "rtx 6000 ada"
+  - "rtx 5000 ada"
+
+  # NVIDIA Titan Series (Collector's Items)
+  - "titan v"
+  - "titan rtx"
+  - "titan xp"
+  - "titan x pascal"
+  - "titan x maxwell"
+  - "titan black"
+  - "titan z"
+  - "gtx titan"
+
+  # Rare Consumer NVIDIA
+  - "rtx 4090"
+  - "rtx 3090 ti"
+  - "rtx 3090"
+  - "rtx 3080 ti"
+  - "gtx 1080 ti"
+  - "gtx 980 ti"
+  - "gtx 780 ti"
+  - "gtx 690"
+  - "gtx 590"
+  - "gtx 295"
+  - "geforce 9800 gx2"
+  - "geforce 7950 gx2"
+
+  # ===========================================
+  # RARE & HIGH-END AMD GPUs
+  # ===========================================
+
+  # AMD Instinct (Data Center - ULTRA RARE)
+  - "instinct mi300"
+  - "instinct mi250"
+  - "instinct mi210"
+  - "instinct mi100"
+  - "instinct mi60"
+  - "instinct mi50"
+  - "instinct mi25"
+  - "radeon instinct"
+
+  # AMD Radeon Pro (Professional)
+  - "radeon pro w7900"
+  - "radeon pro w7800"
+  - "radeon pro w6900x"
+  - "radeon pro w6800"
+  - "radeon pro vii"
+  - "radeon pro duo"
+  - "radeon pro wx 9100"
+  - "radeon pro wx 8200"
+  - "radeon pro ssg"
+  - "firepro w9100"
+  - "firepro w9000"
+  - "firepro w8100"
+  - "firepro s9170"
+  - "firepro s9150"
+
+  # Rare Consumer AMD
+  - "radeon vii"
+  - "rx 7900 xtx"
+  - "rx 6950 xt"
+  - "rx 6900 xt"
+  - "r9 fury x"
+  - "r9 fury"
+  - "r9 295x2"
+  - "r9 290x"
+  - "hd 7990"
+  - "hd 6990"
+  - "hd 5970"
+  - "hd 4870 x2"
+  - "hd 3870 x2"
+
+  # ===========================================
+  # INTEL GPUs (Rare/New)
+  # ===========================================
+  - "intel arc a770"
+  - "intel arc a750"
+  - "intel arc a380"
+  - "intel data center gpu"
+  - "intel ponte vecchio"
+  - "intel flex"
+  - "xe hpg"
+
+  # ===========================================
+  # FPGA BOARDS & CARDS (HIGH VALUE)
+  # ===========================================
+
+  # Xilinx/AMD FPGAs (Premium)
+  - "xilinx alveo"
+  - "alveo u250"
+  - "alveo u200"
+  - "alveo u280"
+  - "alveo u50"
+  - "alveo u55c"
+  - "alveo v80"
+  - "xilinx virtex"
+  - "virtex ultrascale"
+  - "virtex-7"
+  - "virtex-6"
+  - "virtex-5"
+  - "xilinx kintex"
+  - "kintex ultrascale"
+  - "kintex-7"
+  - "xilinx artix"
+  - "artix-7"
+  - "xilinx zynq"
+  - "zynq ultrascale"
+  - "zynq mpsoc"
+  - "xilinx spartan"
+  - "spartan-7"
+  - "spartan-6"
+  - "xilinx versal"
+  - "versal ai core"
+  - "versal premium"
+
+  # Intel/Altera FPGAs (Premium)
+  - "intel stratix"
+  - "stratix 10"
+  - "stratix v"
+  - "stratix iv"
+  - "intel agilex"
+  - "agilex 7"
+  - "agilex 5"
+  - "intel arria"
+  - "arria 10"
+  - "arria v"
+  - "intel cyclone"
+  - "cyclone 10"
+  - "cyclone v"
+  - "cyclone iv"
+  - "intel max"
+  - "max 10"
+  - "altera fpga"
+  - "altera de10"
+  - "de10-nano"
+  - "de1-soc"
+  - "de0-nano"
+
+  # Other FPGA Brands
+  - "lattice fpga"
+  - "lattice ecp5"
+  - "lattice machxo"
+  - "lattice ice40"
+  - "lattice crosslink"
+  - "lattice certus"
+  - "microsemi fpga"
+  - "microchip polarfire"
+  - "polarfire soc"
+  - "smartfusion"
+  - "igloo2"
+  - "achronix speedster"
+  - "achronix fpga"
+  - "efinix fpga"
+  - "gowin fpga"
+
+  # FPGA Dev Boards & Kits
+  - "fpga development board"
+  - "fpga dev kit"
+  - "fpga evaluation"
+  - "fpga accelerator"
+  - "fpga pcie"
+  - "fpga mezzanine"
+  - "fmc connector"
+  - "fpga mining"
+  - "fpga hft"
+  - "bittware fpga"
+  - "alpha data fpga"
+  - "dini group"
+  - "htg fpga"
+  - "terasic fpga"
+  - "digilent fpga"
+  - "numato fpga"
+
+  # ===========================================
+  # VINTAGE GPUs (Classic/Collector)
+  # ===========================================
   - "3dfx"
   - "voodoo"
+  - "voodoo 5"
+  - "voodoo 4"
+  - "voodoo 3"
+  - "voodoo 2"
+  - "voodoo banshee"
+  - "voodoo rush"
+  - "geforce 256"
+  - "geforce2"
+  - "geforce3"
+  - "geforce4"
+  - "geforce fx"
+  - "radeon 9800"
+  - "radeon 9700"
+  - "radeon x800"
+  - "radeon x850"
+  - "radeon x1900"
+  - "radeon x1950"
+  - "matrox parhelia"
+  - "matrox millennium"
+  - "matrox g400"
+  - "matrox g200"
+  - "s3 virge"
+  - "s3 savage"
+  - "riva tnt"
+  - "riva tnt2"
+  - "ati rage"
+  - "ati mach64"
+  - "trident 3d"
+  - "sis 315"
+  - "number nine"
+  - "diamond multimedia"
+  - "stb systems"
+  - "hercules 3d prophet"
+
+  # ===========================================
+  # COMPUTE & AI ACCELERATORS
+  # ===========================================
+  - "google tpu"
+  - "coral tpu"
+  - "edge tpu"
+  - "habana gaudi"
+  - "habana goya"
+  - "graphcore ipu"
+  - "cerebras"
+  - "groq"
+  - "sambanova"
+  - "mythic"
+  - "hailo"
+  - "blaize"
+  - "nvidia jetson"
+  - "jetson agx"
+  - "jetson orin"
+  - "jetson xavier"
+
+  # ===========================================
+  # VINTAGE CPUs
+  # ===========================================
   - "pentium pro"
   - "pentium mmx"
+  - "pentium ii"
+  - "pentium iii"
   - "athlon xp"
+  - "athlon 64"
+  - "athlon mp"
+  - "opteron"
   - "slot 1"
   - "slot a"
   - "socket 7"
@@ -62,19 +351,17 @@ rare_part_keywords:
   - "socket 478"
   - "socket 939"
   - "socket 754"
+  - "socket 940"
+  - "xeon phi"
+  - "itanium"
+  - "alpha 21264"
+  - "sparc"
+  - "mips"
+  - "powerpc"
 
-  # Vintage GPUs
-  - "geforce 256"
-  - "geforce2"
-  - "geforce3"
-  - "geforce4"
-  - "radeon 9800"
-  - "radeon x800"
-  - "matrox"
-  - "s3 virge"
-  - "riva tnt"
-
-  # Vintage RAM
+  # ===========================================
+  # VINTAGE RAM
+  # ===========================================
   - "sdram"
   - "rdram"
   - "rambus"
@@ -84,41 +371,63 @@ rare_part_keywords:
   - "dimm pc133"
   - "ddr1"
   - "ddr2 800"
+  - "registered ecc"
+  - "fb-dimm"
 
-  # Vintage Storage
+  # ===========================================
+  # VINTAGE STORAGE
+  # ===========================================
   - "ide"
   - "pata"
   - "scsi"
+  - "ultra320 scsi"
+  - "sas 15k"
   - "zip drive"
   - "jaz drive"
   - "mfm"
   - "rll"
 
-  # Rare/Specialty
+  # ===========================================
+  # SERVER & DATACENTER
+  # ===========================================
   - "server pull"
   - "engineering sample"
   - "es chip"
-  - "xeon phi"
-  - "nvidia quadro"
-  - "firepro"
-  - "tesla gpu"
+  - "datacenter pull"
+  - "colo equipment"
+  - "infiniband"
+  - "mellanox"
+  - "connectx-6"
+  - "connectx-7"
+  - "bluefield"
 
-  # Legacy Interfaces
+  # ===========================================
+  # LEGACY INTERFACES
+  # ===========================================
   - "agp"
+  - "agp 8x"
   - "pci"
+  - "pci-x"
   - "isa"
   - "vesa"
   - "mca"
   - "eisa"
 
-  # Vintage Sound
+  # ===========================================
+  # VINTAGE SOUND
+  # ===========================================
   - "sound blaster"
+  - "sound blaster awe"
+  - "sound blaster live"
   - "creative labs"
   - "gravis ultrasound"
   - "roland mt-32"
   - "adlib"
+  - "turtle beach"
 
-  # Vintage Network
+  # ===========================================
+  # VINTAGE NETWORK
+  # ===========================================
   - "3com"
   - "token ring"
   - "arcnet"
@@ -149,14 +458,57 @@ alerts:
     vintage_gpu_max: 50.00
     vintage_cpu_max: 30.00
     rare_motherboard_max: 100.00
+    # FPGA thresholds (these are usually expensive)
+    fpga_alveo_max: 2000.00
+    fpga_stratix_max: 1500.00
+    fpga_virtex_max: 1000.00
+    fpga_dev_board_max: 500.00
+    # Datacenter GPU thresholds
+    datacenter_gpu_max: 3000.00
+    titan_max: 800.00
+    quadro_max: 1000.00
 
   # Keyword alerts - notify immediately when found
   instant_alert_keywords:
+    # Vintage GPUs
     - "3dfx voodoo 5"
     - "voodoo 5 6000"
-    - "pentium pro 200"
+    - "voodoo 5 5500"
+    - "titan v"
+    - "titan z"
+
+    # NVIDIA Datacenter (ULTRA HIGH VALUE)
+    - "nvidia h100"
+    - "nvidia h200"
+    - "nvidia a100"
+    - "tesla v100"
+    - "nvidia dgx"
+    - "sxm4"
+    - "sxm5"
+
+    # AMD Datacenter
+    - "instinct mi300"
+    - "instinct mi250"
+    - "instinct mi100"
+
+    # Premium FPGAs (ULTRA HIGH VALUE)
+    - "alveo u280"
+    - "alveo u250"
+    - "alveo u200"
+    - "virtex ultrascale"
+    - "stratix 10"
+    - "agilex 7"
+    - "versal ai core"
+    - "versal premium"
+
+    # Other High Value
     - "xeon phi"
-    - "nvidia tesla"
+    - "graphcore ipu"
+    - "habana gaudi"
+    - "cerebras"
+    - "groq"
+    - "google tpu"
+    - "pentium pro 200"
 
 # Scraper Source Configuration
 sources:

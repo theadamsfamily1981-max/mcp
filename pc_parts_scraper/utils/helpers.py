@@ -70,21 +70,87 @@ def categorize_part(title: str, description: str = "") -> str:
     """Categorize a PC part based on title and description"""
     text = f"{title} {description}".lower()
 
+    # ===========================================
+    # FPGA PATTERNS (Check first - high value)
+    # ===========================================
+    fpga_patterns = [
+        r'\bfpga\b', r'\balveo\b', r'\bvirtex\b', r'\bkintex\b', r'\bartix\b',
+        r'\bzynq\b', r'\bspartan\b', r'\bversal\b', r'\bstratix\b', r'\barria\b',
+        r'\bcyclone\b', r'\bagilex\b', r'\bmax\s*10\b', r'\baltera\b',
+        r'\bxilinx\b', r'\blattice\b', r'\becp5\b', r'\bice40\b',
+        r'\bmicrosemi\b', r'\bpolarfire\b', r'\bsmartfusion\b', r'\bigloo\b',
+        r'\bachronix\b', r'\bspeedster\b', r'\befinix\b', r'\bgowin\b',
+        r'\bde10\b', r'\bde1-soc\b', r'\bde0\b', r'\bterasic\b', r'\bdigilent\b',
+        r'\bbittware\b', r'\bhtg\b.*\bfpga\b', r'\bnumato\b'
+    ]
+    for pattern in fpga_patterns:
+        if re.search(pattern, text):
+            return 'fpga'
+
+    # ===========================================
+    # AI ACCELERATORS (Check before GPU)
+    # ===========================================
+    ai_accel_patterns = [
+        r'\btpu\b', r'\bcoral\b.*\bedge\b', r'\bedge\s*tpu\b',
+        r'\bhabana\b', r'\bgaudi\b', r'\bgoya\b',
+        r'\bgraphcore\b', r'\bipu\b', r'\bcerebras\b', r'\bgroq\b',
+        r'\bsambanova\b', r'\bmythic\b', r'\bhailo\b', r'\bblaize\b',
+        r'\bjetson\b', r'\borin\b', r'\bxavier\b', r'\bagx\b'
+    ]
+    for pattern in ai_accel_patterns:
+        if re.search(pattern, text):
+            return 'ai_accelerator'
+
+    # ===========================================
+    # DATACENTER GPUs (Check before generic GPU)
+    # ===========================================
+    datacenter_gpu_patterns = [
+        r'\bh100\b', r'\bh200\b', r'\ba100\b', r'\ba800\b', r'\ba30\b',
+        r'\ba40\b', r'\ba10\b', r'\ba16\b', r'\bl40\b', r'\bl4\b',
+        r'\btesla\s*v100\b', r'\btesla\s*p100\b', r'\btesla\s*p40\b',
+        r'\btesla\s*p4\b', r'\btesla\s*k80\b', r'\btesla\s*k40\b',
+        r'\btesla\s*k20\b', r'\btesla\s*m40\b', r'\btesla\s*m60\b',
+        r'\bdgx\b', r'\bnvlink\b', r'\bsxm[245]\b',
+        r'\binstinct\s*mi\d+', r'\bmi300\b', r'\bmi250\b', r'\bmi100\b',
+        r'\bmi60\b', r'\bmi50\b', r'\bmi25\b'
+    ]
+    for pattern in datacenter_gpu_patterns:
+        if re.search(pattern, text):
+            return 'gpu_datacenter'
+
+    # ===========================================
+    # PROFESSIONAL GPUs (Quadro/FirePro/Radeon Pro)
+    # ===========================================
+    pro_gpu_patterns = [
+        r'\bquadro\b', r'\brtx\s*a[456]\d{3}\b', r'\brtx\s*[56]000\s*ada\b',
+        r'\bfirepro\b', r'\bradeon\s*pro\b', r'\bwx\s*\d{4}\b',
+        r'\btitan\s*v\b', r'\btitan\s*rtx\b', r'\btitan\s*z\b',
+        r'\btitan\s*xp\b', r'\btitan\s*x\b', r'\btitan\s*black\b'
+    ]
+    for pattern in pro_gpu_patterns:
+        if re.search(pattern, text):
+            return 'gpu_professional'
+
+    # ===========================================
     # CPU patterns
+    # ===========================================
     cpu_patterns = [
         r'\bcpu\b', r'\bprocessor\b', r'\bintel\b.*\b(core|xeon|pentium|celeron)\b',
         r'\bamd\b.*\b(ryzen|athlon|epyc|opteron|phenom)\b', r'\bsocket\s*\d+',
-        r'\blga\s*\d+', r'\bam[45]\b'
+        r'\blga\s*\d+', r'\bam[45]\b', r'\bxeon\s*phi\b', r'\bitanium\b'
     ]
     for pattern in cpu_patterns:
         if re.search(pattern, text):
             return 'cpu'
 
-    # GPU patterns
+    # ===========================================
+    # Generic GPU patterns
+    # ===========================================
     gpu_patterns = [
         r'\bgpu\b', r'\bgraphics\s*card\b', r'\bvideo\s*card\b',
         r'\bgeforce\b', r'\bradeon\b', r'\brtx\b', r'\bgtx\b',
-        r'\bvoodoo\b', r'\bquadro\b', r'\bfirepro\b', r'\btesla\b'
+        r'\bvoodoo\b', r'\b3dfx\b', r'\bmatrox\b', r'\bs3\s*virge\b',
+        r'\briva\s*tnt\b', r'\brage\b', r'\bmach64\b'
     ]
     for pattern in gpu_patterns:
         if re.search(pattern, text):
@@ -219,6 +285,73 @@ def calculate_rarity_score(
     for item in ultra_rare:
         if item in text:
             score += 15
+
+    # ===========================================
+    # HIGH-VALUE DATACENTER GPUs (Major bonus)
+    # ===========================================
+    datacenter_gpus = [
+        'h100', 'h200', 'a100', 'a800', 'dgx', 'sxm4', 'sxm5',
+        'mi300', 'mi250', 'mi100', 'instinct'
+    ]
+    for gpu in datacenter_gpus:
+        if gpu in text:
+            score += 25
+
+    # ===========================================
+    # HIGH-VALUE FPGAs (Major bonus)
+    # ===========================================
+    premium_fpgas = [
+        'alveo', 'virtex ultrascale', 'versal', 'stratix 10', 'agilex',
+        'arria 10', 'kintex ultrascale'
+    ]
+    for fpga in premium_fpgas:
+        if fpga in text:
+            score += 25
+
+    mid_tier_fpgas = [
+        'virtex-7', 'virtex-6', 'kintex-7', 'stratix v', 'stratix iv',
+        'arria v', 'cyclone 10', 'polarfire'
+    ]
+    for fpga in mid_tier_fpgas:
+        if fpga in text:
+            score += 15
+
+    entry_fpgas = [
+        'spartan', 'artix', 'cyclone v', 'cyclone iv', 'max 10',
+        'ecp5', 'ice40', 'de10', 'de1-soc'
+    ]
+    for fpga in entry_fpgas:
+        if fpga in text:
+            score += 10
+
+    # ===========================================
+    # AI ACCELERATORS (Major bonus)
+    # ===========================================
+    ai_accelerators = [
+        'tpu', 'gaudi', 'graphcore', 'ipu', 'cerebras', 'groq',
+        'sambanova', 'jetson orin', 'jetson agx'
+    ]
+    for accel in ai_accelerators:
+        if accel in text:
+            score += 20
+
+    # ===========================================
+    # PROFESSIONAL GPUs (Moderate bonus)
+    # ===========================================
+    pro_gpus = [
+        'quadro rtx 8000', 'quadro rtx 6000', 'quadro gv100', 'quadro gp100',
+        'rtx a6000', 'rtx 6000 ada', 'firepro w9100', 'firepro s9170',
+        'radeon pro w7900', 'radeon pro vii'
+    ]
+    for gpu in pro_gpus:
+        if gpu in text:
+            score += 15
+
+    # Category bonus
+    if category in ['fpga', 'gpu_datacenter', 'ai_accelerator']:
+        score += 10
+    elif category == 'gpu_professional':
+        score += 5
 
     return min(score, 100)
 
