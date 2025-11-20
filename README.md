@@ -7,6 +7,7 @@ This is a custom Linux kernel module system designed to maximize performance of 
 ## Key Features
 
 - **🧠 Semantic AI Engine**: Intelligent, adaptive resource allocation using reinforcement learning and knowledge graphs
+- **♻️ FPGA Salvage Tool**: Repurpose cryptocurrency mining FPGAs (Stratix 10, Virtex UltraScale+) for AI research
 - **GPU-FPGA P2P Communication**: High-throughput, low-latency peer-to-peer data transfers via PCIe 5.0
 - **Pinned Memory Management**: Deterministic memory access for GPU and FPGA with no swapping
 - **Real-Time Scheduling**: Priority-based task scheduling for time-critical SNN computations
@@ -116,6 +117,8 @@ The kernel includes a **production-ready AI engine** with advanced capabilities:
 ### Hardware
 - GPU with CUDA capability (compute capability 7.0+)
 - FPGA with PCIe 5.0 support (Xilinx Alveo or Intel Stratix recommended)
+  - **Budget Option**: Salvaged cryptocurrency mining FPGAs (Stratix 10, Virtex UltraScale+) - See [FPGA Salvage Guide](docs/FPGA_SALVAGE_GUIDE.md)
+  - **Cost**: $500-1,200 used vs $5,000-15,000 new (10-20x savings!)
 - PCIe 5.0 compatible motherboard
 - NVMe SSD (PCIe 4.0/5.0)
 - Minimum 32GB RAM (64GB+ recommended for large SNN models)
@@ -126,6 +129,34 @@ The kernel includes a **production-ready AI engine** with advanced capabilities:
 - GCC 11+ or Clang 14+
 - CMake 3.20+
 - FPGA vendor tools (Vivado/Quartus)
+
+## Repurposing Mining FPGAs (Budget-Friendly!)
+
+Got a discarded cryptocurrency mining FPGA? Repurpose it for AI research!
+
+```bash
+# Step 1: Salvage the FPGA (removes proprietary mining firmware)
+cd tools/fpga_salvage
+sudo ./fpga_salvage.py --vendor stratix10  # or --vendor virtex
+
+# Step 2: Tune voltage for AI workloads (optional)
+sudo ./scripts/pmic_flasher.py --bus 0 --preset efficient
+
+# Step 3: Integrate with SNN kernel (see below)
+```
+
+**Supported Mining Hardware**:
+- Intel Stratix 10 (10SX/10GX) - Common in Ethereum miners
+- Xilinx Virtex UltraScale+ (VU9P/VU13P) - High-end miners
+- Xilinx Kintex UltraScale+ (KU5P/KU15P) - Mid-range
+
+**Why salvage?**
+- 💰 **Cost**: $500 used vs $10,000 new (20x savings)
+- ⚡ **Performance**: Same FPGA chips, lower power (85W vs 150W)
+- ♻️ **Environmental**: Reduce e-waste from defunct mining operations
+- 🔓 **Freedom**: Full control, no vendor lock-in
+
+📚 **Full guide**: [docs/FPGA_SALVAGE_GUIDE.md](docs/FPGA_SALVAGE_GUIDE.md)
 
 ## Building
 

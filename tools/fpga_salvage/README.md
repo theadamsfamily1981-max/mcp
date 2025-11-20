@@ -1,0 +1,217 @@
+# FPGA Salvage Tool
+
+Repurpose cryptocurrency mining FPGAs (Stratix 10, Virtex UltraScale+) for AI research.
+
+## Quick Start
+
+```bash
+# Test JTAG connection (safe, no modifications)
+sudo ./fpga_salvage.py --vendor stratix10 --skip-erase
+
+# Full salvage (erases mining firmware)
+sudo ./fpga_salvage.py --vendor stratix10
+
+# Voltage tuning (after salvage)
+sudo ./scripts/pmic_flasher.py --bus 0 --read
+sudo ./scripts/pmic_flasher.py --bus 0 --preset safe
+```
+
+## Supported Devices
+
+- **Intel Stratix 10** (10SX/10GX): `--vendor stratix10`
+- **Xilinx Virtex UltraScale+** (VU9P/VU13P): `--vendor virtex`
+- **Xilinx Kintex UltraScale+** (KU5P/KU15P): `--vendor kintex`
+
+## Directory Structure
+
+```
+fpga_salvage/
+├── fpga_salvage.py          # Main salvage tool
+├── configs/                 # OpenOCD JTAG configurations
+│   ├── stratix10.cfg
+│   ├── virtex_ultrascale.cfg
+│   └── kintex_ultrascale.cfg
+├── bitstreams/              # Diagnostic bitstreams (generate yourself)
+│   └── README.md            # Bitstream generation guide
+└── scripts/                 # Helper utilities
+    └── pmic_flasher.py      # Voltage/frequency tuning
+```
+
+## Requirements
+
+### Hardware
+- FPGA mining board (Stratix 10, Virtex UltraScale+, or Kintex UltraScale+)
+- USB JTAG adapter:
+  - Intel: USB-Blaster II
+  - Xilinx: Platform Cable USB II, FT2232H, or Digilent HS2
+- 12V power supply (200-400W depending on board)
+
+### Software
+```bash
+# Install dependencies (Ubuntu/Debian)
+sudo apt update
+sudo apt install openocd i2c-tools python3
+
+# Optional (for bitstream generation)
+# - Intel Quartus Prime Pro (for Stratix 10)
+# - Xilinx Vivado (for UltraScale+)
+```
+
+## Usage
+
+### 1. Test Connection (Safe Mode)
+
+```bash
+# This only detects the FPGA, does not modify anything
+sudo ./fpga_salvage.py --vendor stratix10 --skip-erase
+```
+
+### 2. Full Salvage Procedure
+
+```bash
+# WARNING: This erases the proprietary mining firmware!
+sudo ./fpga_salvage.py --vendor stratix10
+
+# You will be prompted:
+# ⚠️  Erase proprietary bootloader? (yes/no): yes
+```
+
+### 3. Voltage Tuning (Optional)
+
+```bash
+# Read current PMIC settings
+sudo ./scripts/pmic_flasher.py --bus 0 --read
+
+# Set to efficient preset (0.80V for lower power AI inference)
+sudo ./scripts/pmic_flasher.py --bus 0 --preset efficient
+
+# Or set custom voltage
+sudo ./scripts/pmic_flasher.py --bus 0 --voltage 0.85
+```
+
+## Safety Guidelines
+
+### ⚠️  Voltage Limits
+- **Safe range**: 0.80V - 0.89V (VCCINT)
+- **Nominal**: 0.85V
+- **DO NOT** exceed 0.95V (can damage FPGA)
+- **DO NOT** go below 0.75V (may cause instability)
+
+### ⚠️  Thermal Management
+- **Idle**: <65°C (good)
+- **Load**: <85°C (acceptable)
+- **Max**: <100°C (dangerous, reduce voltage or improve cooling)
+
+### ⚠️  Legal
+- ✅ Only use on hardware you own
+- ✅ Educational/research purposes
+- ❌ Do not extract proprietary bitstreams
+- ❌ Do not access hardware you don't own
+
+## Troubleshooting
+
+### Issue: "JTAG connection failed"
+```bash
+# Check board power
+# Verify JTAG adapter: lsusb | grep -i ftdi
+
+# Try slower JTAG speed
+# Edit configs/stratix10.cfg: adapter speed 1000
+```
+
+### Issue: "No bitstream found"
+```bash
+# Generate diagnostic bitstream (see bitstreams/README.md)
+# OR skip bitstream and use JTAG-only mode
+sudo ./fpga_salvage.py --vendor stratix10 --skip-erase
+```
+
+### Issue: "PMIC not detected"
+```bash
+# List I2C buses
+i2cdetect -l
+
+# Scan for devices
+sudo i2cdetect -y 0  # Try bus 0, 1, 2, etc.
+
+# Look for addresses like 0x60, 0x70 (PMICs)
+```
+
+## Examples
+
+### Example 1: Salvage Stratix 10 from Ethereum Miner
+```bash
+# 1. Connect JTAG (USB-Blaster to 10-pin header)
+# 2. Power on board (12V, check LED indicator)
+
+# 3. Test connection
+sudo ./fpga_salvage.py --vendor stratix10 --skip-erase
+
+# 4. Erase mining firmware
+sudo ./fpga_salvage.py --vendor stratix10
+# Answer "yes" to erase prompt
+
+# 5. Tune voltage for AI workloads
+sudo ./scripts/pmic_flasher.py --bus 0 --preset safe
+
+# 6. Verify
+sudo ./scripts/pmic_flasher.py --bus 0 --read
+```
+
+### Example 2: Salvage Xilinx VCU1525 (VU9P)
+```bash
+# 1. Connect JTAG (FT2232H to 14-pin header)
+# 2. Power on via PCIe or 12V barrel jack
+
+# 3. Salvage
+sudo ./fpga_salvage.py --vendor virtex
+
+# 4. Check PMIC (if available)
+sudo ./scripts/pmic_flasher.py --bus 1 --read
+```
+
+## Integration with SNN Kernel
+
+After salvaging, integrate with the main SNN kernel system:
+
+```bash
+# 1. Build kernel module
+cd /path/to/mcp
+make
+
+# 2. Load module
+sudo modprobe snn_kernel_core
+
+# 3. Verify FPGA detection
+lspci | grep -i fpga
+# Should show: 01:00.0 Processing accelerators: Intel/Xilinx Device...
+
+# 4. Program AI bitstream (see docs/ARCHITECTURE.md)
+aocl program acl0 my_snn_kernel.aocx  # Intel OpenCL
+# OR
+xbutil program -d 0 -u my_snn_kernel.xclbin  # Xilinx Vitis
+```
+
+## Contributing
+
+Found a bug? Have a mining board we don't support?
+
+1. Open an issue: [GitHub Issues](https://github.com/your-repo/mcp/issues)
+2. Submit a PR with:
+   - New OpenOCD config
+   - PMIC driver
+   - Diagnostic bitstream
+
+## Resources
+
+- **Full Guide**: [docs/FPGA_SALVAGE_GUIDE.md](../../docs/FPGA_SALVAGE_GUIDE.md)
+- **API Documentation**: [docs/API_GUIDE.md](../../docs/API_GUIDE.md)
+- **Architecture**: [docs/ARCHITECTURE.md](../../docs/ARCHITECTURE.md)
+
+## License
+
+GPL-3.0 (compatible with Linux kernel modules)
+
+---
+
+**Disclaimer**: This tool is for educational and research purposes on hardware you legally own. Always follow local laws and respect intellectual property.
