@@ -158,12 +158,18 @@ sudo ./scripts/pmic_flasher.py --bus 0 --preset efficient
 
 **Supported Hardware**:
 
-*Mining FPGAs:*
+*Single Mining FPGAs:*
 - Intel Stratix 10 (10SX/10GX) - Common in Ethereum miners
 - Xilinx Virtex UltraScale+ (VU9P/VU13P) - High-end miners
 - Xilinx Kintex UltraScale+ (KU5P/KU15P) - Mid-range
 
-*ATCA Telecom Boards:* ✨ NEW!
+*Mining Hashboards:* 🔥 NEW!
+- 4x Agilex 10 boards (5.6M cells total, 128GB DDR4) - $200-400 used
+- 4x Stratix/Virtex boards - Multiple high-end FPGAs per board
+- VU33P/VU35P/VU37P PCIe cards (1.2-2M cells, PCIe interface) - $500-1,200
+- See [Hashboard Salvage Guide](docs/HASHBOARD_SALVAGE_GUIDE.md)
+
+*ATCA Telecom Boards:*
 - Virtex-7/Virtex-6 (Emerson, Radisys, Kontron)
 - Stratix IV/V, Arria 10 (Mercury, NAT Semi, Advantech)
 - Cost: $200-$2,000 used vs $10,000-$50,000 new (5-25x savings!)
@@ -177,7 +183,9 @@ sudo ./scripts/pmic_flasher.py --bus 0 --preset efficient
 
 📚 **Guides**:
 - Mining FPGAs: [docs/FPGA_SALVAGE_GUIDE.md](docs/FPGA_SALVAGE_GUIDE.md)
-- ATCA Boards: [docs/ATCA_SALVAGE_GUIDE.md](docs/ATCA_SALVAGE_GUIDE.md) ✨ NEW!
+- Hashboards (4x chips!): [docs/HASHBOARD_SALVAGE_GUIDE.md](docs/HASHBOARD_SALVAGE_GUIDE.md) 🔥 NEW!
+- ATCA Boards: [docs/ATCA_SALVAGE_GUIDE.md](docs/ATCA_SALVAGE_GUIDE.md)
+- Hardware Adapters: [tools/fpga_salvage/hardware/](tools/fpga_salvage/hardware/) 🔧 NEW!
 
 ## Building
 

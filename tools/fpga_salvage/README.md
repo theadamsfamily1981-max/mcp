@@ -41,11 +41,23 @@ sudo ./scripts/pmic_flasher.py --bus 0 --preset safe
 - **Xilinx Virtex UltraScale+** (VU9P/VU13P): `--vendor virtex`
 - **Xilinx Kintex UltraScale+** (KU5P/KU15P): `--vendor kintex`
 
-### ATCA Telecom Boards ✨ NEW!
+### Mining Hashboards 🔥 NEW!
+- **4x Agilex Hashboards** (Linzhi Phoenix, Chinese miners): `--vendor hashboard-agilex`
+  - 4 chips in JTAG chain: **5.6M logic cells total!**
+  - 128GB DDR4, perfect for massive SNN models
+  - Cost: $200-400 used (vs $60,000 new equivalent!)
+- **PCIe Mining Cards** (VU33P/VU35P/VU37P): `--vendor pcie-mining-card`
+  - Single high-end chip, 1.2-2M cells
+  - PCIe Gen3/4 interface, 64GB DDR4
+  - Cost: $500-1,200 (vs $6,000 new)
+
+### ATCA Telecom Boards
 - **ATCA Virtex-7** (Emerson, Radisys, Mercury): `--vendor atca-virtex7`
 - **ATCA Virtex-6** (Kontron, older boards): `--vendor atca-virtex6`
 - **ATCA Stratix IV/V** (NAT Semi, Mercury): `--vendor atca-stratix4`
 - **ATCA Arria 10** (Advantech, Trenton): `--vendor atca-arria10`
+
+**What is a Hashboard?** The compute module from a cryptocurrency miner - typically 2-4 high-end FPGAs on one board. Mining crash = incredible deals!
 
 **What is ATCA?** Advanced Telecommunications Computing Architecture - enterprise telecom boards with powerful FPGAs. Decommissioned boards sell for $200-$2,000 vs $10,000-$50,000 new!
 
@@ -57,7 +69,11 @@ fpga_salvage/
 ├── configs/                 # OpenOCD JTAG configurations
 │   ├── stratix10.cfg
 │   ├── virtex_ultrascale.cfg
-│   └── kintex_ultrascale.cfg
+│   ├── kintex_ultrascale.cfg
+│   ├── hashboard_agilex.cfg         ← NEW (4x Agilex hashboards)
+│   ├── pcie_mining_card.cfg         ← NEW (VU33P/VU35P/VU37P)
+│   ├── atca_xilinx.cfg
+│   └── atca_altera.cfg
 ├── bitstreams/              # Diagnostic bitstreams (generate yourself)
 │   └── README.md            # Bitstream generation guide
 └── scripts/                 # Helper utilities
@@ -237,8 +253,14 @@ Found a bug? Have a mining board we don't support?
 
 ## Resources
 
-- **Full Mining FPGA Guide**: [docs/FPGA_SALVAGE_GUIDE.md](../../docs/FPGA_SALVAGE_GUIDE.md)
-- **ATCA Board Guide**: [docs/ATCA_SALVAGE_GUIDE.md](../../docs/ATCA_SALVAGE_GUIDE.md) ✨ NEW!
+- **Mining FPGA Guide**: [docs/FPGA_SALVAGE_GUIDE.md](../../docs/FPGA_SALVAGE_GUIDE.md)
+- **Hashboard Guide**: [docs/HASHBOARD_SALVAGE_GUIDE.md](../../docs/HASHBOARD_SALVAGE_GUIDE.md) 🔥 NEW!
+- **ATCA Board Guide**: [docs/ATCA_SALVAGE_GUIDE.md](../../docs/ATCA_SALVAGE_GUIDE.md)
+- **Hardware Adapters**: [hardware/](hardware/) 🔧 NEW!
+  - JTAG breakout boards
+  - Power adapters for hashboards
+  - Multi-chip JTAG splitters
+  - PCB designs + schematics
 - **API Documentation**: [docs/API_GUIDE.md](../../docs/API_GUIDE.md)
 - **Architecture**: [docs/ARCHITECTURE.md](../../docs/ARCHITECTURE.md)
 
