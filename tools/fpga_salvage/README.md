@@ -2,7 +2,32 @@
 
 Repurpose cryptocurrency mining FPGAs and ATCA telecom boards for AI research.
 
-## 🌐 Easy Web GUI (Recommended!)
+## 🤖 One-Click AI Automation (EASIEST!)
+
+**NEW:** Fully automated salvage - just take a photo!
+
+```bash
+# 1. Take photo of your board (top-down view)
+# 2. Run auto salvage:
+python3 ai/auto_salvage.py board_photo.jpg
+
+# That's it! AI will:
+# ✓ Detect hardware (computer vision)
+# ✓ Generate JTAG config (automatic)
+# ✓ Erase mining firmware (jailbreak)
+# ✓ Run diagnostics (validation)
+# ✓ Generate report (next steps)
+```
+
+**Features**:
+- 🧠 **AI board detection** - Identify FPGA from photo (OCR + CV)
+- 🔧 **Auto configuration** - Zero manual setup
+- 🩺 **AI diagnostics** - Troubleshoot errors with GPT-4/Claude
+- ⚡ **One command** - Complete workflow in 5-10 minutes
+
+**See:** [ai/README.md](ai/README.md) for full AI automation docs
+
+## 🌐 Easy Web GUI (Also Great!)
 
 ```bash
 # One-command setup and launch:
@@ -66,6 +91,12 @@ sudo ./scripts/pmic_flasher.py --bus 0 --preset safe
 ```
 fpga_salvage/
 ├── fpga_salvage.py          # Main salvage tool
+├── ai/                      # 🤖 AI-powered automation (NEW!)
+│   ├── auto_salvage.py      # One-click salvage workflow
+│   ├── board_detector.py    # Computer vision board detection
+│   ├── diagnostic_assistant.py  # LLM-powered troubleshooting
+│   ├── requirements.txt     # AI dependencies
+│   └── README.md            # AI automation docs
 ├── configs/                 # OpenOCD JTAG configurations
 │   ├── stratix10.cfg
 │   ├── virtex_ultrascale.cfg
@@ -74,6 +105,14 @@ fpga_salvage/
 │   ├── pcie_mining_card.cfg         ← NEW (VU33P/VU35P/VU37P)
 │   ├── atca_xilinx.cfg
 │   └── atca_altera.cfg
+├── gui/                     # Web interface
+│   ├── fpga_salvage_gui.py  # Flask server
+│   ├── templates/           # HTML templates
+│   └── setup_gui.sh         # One-command GUI setup
+├── hardware/                # PCB designs and adapters
+│   ├── jtag_breakout/       # JTAG adapter schematics
+│   ├── hashboard_power/     # Power adapters
+│   └── README.md            # Hardware design docs
 ├── bitstreams/              # Diagnostic bitstreams (generate yourself)
 │   └── README.md            # Bitstream generation guide
 └── scripts/                 # Helper utilities
@@ -90,14 +129,30 @@ fpga_salvage/
 - 12V power supply (200-400W depending on board)
 
 ### Software
+
+**Basic (command line only):**
 ```bash
 # Install dependencies (Ubuntu/Debian)
 sudo apt update
 sudo apt install openocd i2c-tools python3
+```
 
-# Optional (for bitstream generation)
-# - Intel Quartus Prime Pro (for Stratix 10)
-# - Xilinx Vivado (for UltraScale+)
+**AI Automation (recommended):**
+```bash
+# Install AI dependencies
+pip install -r ai/requirements.txt
+
+# Optional: Set up AI API key for best diagnostics
+export ANTHROPIC_API_KEY='your-key-here'  # Claude (recommended)
+# OR
+export OPENAI_API_KEY='your-key-here'     # GPT-4 (alternative)
+# Get keys from: https://console.anthropic.com/
+```
+
+**Bitstream generation (optional):**
+```bash
+# Intel Quartus Prime Pro (for Stratix 10)
+# Xilinx Vivado (for UltraScale+)
 ```
 
 ## Usage
