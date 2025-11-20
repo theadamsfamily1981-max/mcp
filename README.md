@@ -130,14 +130,25 @@ The kernel includes a **production-ready AI engine** with advanced capabilities:
 - CMake 3.20+
 - FPGA vendor tools (Vivado/Quartus)
 
-## Repurposing Mining FPGAs (Budget-Friendly!)
+## Repurposing Mining & ATCA FPGAs (Budget-Friendly!)
 
-Got a discarded cryptocurrency mining FPGA? Repurpose it for AI research!
+Got a discarded cryptocurrency mining FPGA or decommissioned ATCA telecom board? Repurpose it for AI research!
 
+**🌐 Easy Web GUI Method (Recommended!):**
+```bash
+# One command to launch web interface:
+cd tools/fpga_salvage/gui
+sudo ./setup_gui.sh
+
+# Then open browser to: http://localhost:5000
+# Click through the step-by-step wizard!
+```
+
+**💻 Command Line Method:**
 ```bash
 # Step 1: Salvage the FPGA (removes proprietary mining firmware)
 cd tools/fpga_salvage
-sudo ./fpga_salvage.py --vendor stratix10  # or --vendor virtex
+sudo ./fpga_salvage.py --vendor stratix10  # or --vendor virtex, atca-virtex7, etc.
 
 # Step 2: Tune voltage for AI workloads (optional)
 sudo ./scripts/pmic_flasher.py --bus 0 --preset efficient
@@ -145,10 +156,18 @@ sudo ./scripts/pmic_flasher.py --bus 0 --preset efficient
 # Step 3: Integrate with SNN kernel (see below)
 ```
 
-**Supported Mining Hardware**:
+**Supported Hardware**:
+
+*Mining FPGAs:*
 - Intel Stratix 10 (10SX/10GX) - Common in Ethereum miners
 - Xilinx Virtex UltraScale+ (VU9P/VU13P) - High-end miners
 - Xilinx Kintex UltraScale+ (KU5P/KU15P) - Mid-range
+
+*ATCA Telecom Boards:* ✨ NEW!
+- Virtex-7/Virtex-6 (Emerson, Radisys, Kontron)
+- Stratix IV/V, Arria 10 (Mercury, NAT Semi, Advantech)
+- Cost: $200-$2,000 used vs $10,000-$50,000 new (5-25x savings!)
+- See [ATCA Salvage Guide](docs/ATCA_SALVAGE_GUIDE.md)
 
 **Why salvage?**
 - 💰 **Cost**: $500 used vs $10,000 new (20x savings)
@@ -156,7 +175,9 @@ sudo ./scripts/pmic_flasher.py --bus 0 --preset efficient
 - ♻️ **Environmental**: Reduce e-waste from defunct mining operations
 - 🔓 **Freedom**: Full control, no vendor lock-in
 
-📚 **Full guide**: [docs/FPGA_SALVAGE_GUIDE.md](docs/FPGA_SALVAGE_GUIDE.md)
+📚 **Guides**:
+- Mining FPGAs: [docs/FPGA_SALVAGE_GUIDE.md](docs/FPGA_SALVAGE_GUIDE.md)
+- ATCA Boards: [docs/ATCA_SALVAGE_GUIDE.md](docs/ATCA_SALVAGE_GUIDE.md) ✨ NEW!
 
 ## Building
 

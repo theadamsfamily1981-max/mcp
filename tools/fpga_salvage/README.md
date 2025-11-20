@@ -1,8 +1,26 @@
 # FPGA Salvage Tool
 
-Repurpose cryptocurrency mining FPGAs (Stratix 10, Virtex UltraScale+) for AI research.
+Repurpose cryptocurrency mining FPGAs and ATCA telecom boards for AI research.
 
-## Quick Start
+## 🌐 Easy Web GUI (Recommended!)
+
+```bash
+# One-command setup and launch:
+cd gui/
+sudo ./setup_gui.sh
+
+# Then open your browser to: http://localhost:5000
+```
+
+**Features**:
+- 📱 Modern web interface (works on phone/tablet too!)
+- 🧙 Step-by-step wizard
+- 📊 Real-time progress updates
+- ⚡ Voltage tuning with sliders
+- 🔍 Auto hardware detection
+- 📜 Live log viewer
+
+## 💻 Command Line (Advanced)
 
 ```bash
 # Test JTAG connection (safe, no modifications)
@@ -18,9 +36,18 @@ sudo ./scripts/pmic_flasher.py --bus 0 --preset safe
 
 ## Supported Devices
 
+### Cryptocurrency Mining FPGAs
 - **Intel Stratix 10** (10SX/10GX): `--vendor stratix10`
 - **Xilinx Virtex UltraScale+** (VU9P/VU13P): `--vendor virtex`
 - **Xilinx Kintex UltraScale+** (KU5P/KU15P): `--vendor kintex`
+
+### ATCA Telecom Boards ✨ NEW!
+- **ATCA Virtex-7** (Emerson, Radisys, Mercury): `--vendor atca-virtex7`
+- **ATCA Virtex-6** (Kontron, older boards): `--vendor atca-virtex6`
+- **ATCA Stratix IV/V** (NAT Semi, Mercury): `--vendor atca-stratix4`
+- **ATCA Arria 10** (Advantech, Trenton): `--vendor atca-arria10`
+
+**What is ATCA?** Advanced Telecommunications Computing Architecture - enterprise telecom boards with powerful FPGAs. Decommissioned boards sell for $200-$2,000 vs $10,000-$50,000 new!
 
 ## Directory Structure
 
@@ -202,9 +229,16 @@ Found a bug? Have a mining board we don't support?
    - PMIC driver
    - Diagnostic bitstream
 
+## Screenshots
+
+### Web GUI
+![FPGA Salvage Web GUI](../../docs/images/fpga_salvage_gui.png)
+*(Modern, easy-to-use interface - no command line required!)*
+
 ## Resources
 
-- **Full Guide**: [docs/FPGA_SALVAGE_GUIDE.md](../../docs/FPGA_SALVAGE_GUIDE.md)
+- **Full Mining FPGA Guide**: [docs/FPGA_SALVAGE_GUIDE.md](../../docs/FPGA_SALVAGE_GUIDE.md)
+- **ATCA Board Guide**: [docs/ATCA_SALVAGE_GUIDE.md](../../docs/ATCA_SALVAGE_GUIDE.md) ✨ NEW!
 - **API Documentation**: [docs/API_GUIDE.md](../../docs/API_GUIDE.md)
 - **Architecture**: [docs/ARCHITECTURE.md](../../docs/ARCHITECTURE.md)
 
