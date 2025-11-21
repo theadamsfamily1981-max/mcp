@@ -2,6 +2,7 @@
 httpx==0.27.0
 aiohttp==3.9.5
 asyncio-throttle==1.0.2
+curl-cffi==0.7.0  # TLS fingerprint impersonation
 
 # HTML Parsing
 beautifulsoup4==4.12.3
@@ -20,6 +21,14 @@ aiosqlite==0.20.0
 pandas==2.2.2
 fuzzywuzzy==0.18.0
 python-Levenshtein==0.25.1
+
+# Machine Learning & Anomaly Detection
+scikit-learn==1.5.0
+numpy==1.26.4
+
+# Image Analysis (Perceptual Hashing)
+Pillow==10.3.0
+imagehash==4.3.1
 
 # Proxy & Anti-Detection
 fake-useragent==1.5.1
