@@ -6,8 +6,14 @@ import re
 import hashlib
 from typing import List, Optional, Dict, Any
 from datetime import datetime
-from fuzzywuzzy import fuzz
 import yaml
+
+# Optional fuzzy matching (performance optimization)
+try:
+    from fuzzywuzzy import fuzz
+    FUZZY_AVAILABLE = True
+except ImportError:
+    FUZZY_AVAILABLE = False
 
 
 def load_config(config_path: str = "config/settings.yaml") -> Dict[str, Any]:
@@ -481,19 +487,20 @@ def fuzzy_match_keywords(text: str, keywords: List[str], threshold: int = 80) ->
             matched.append(keyword)
             continue
 
-        # Then try fuzzy match on word boundaries
-        words = text_lower.split()
-        for i in range(len(words)):
-            # Try matching against single words and word pairs
-            for j in range(i + 1, min(i + 4, len(words) + 1)):
-                phrase = ' '.join(words[i:j])
-                ratio = fuzz.ratio(keyword.lower(), phrase)
-                if ratio >= threshold:
-                    matched.append(keyword)
-                    break
-            else:
-                continue
-            break
+        # Then try fuzzy match on word boundaries (if available)
+        if FUZZY_AVAILABLE:
+            words = text_lower.split()
+            for i in range(len(words)):
+                # Try matching against single words and word pairs
+                for j in range(i + 1, min(i + 4, len(words) + 1)):
+                    phrase = ' '.join(words[i:j])
+                    ratio = fuzz.ratio(keyword.lower(), phrase)
+                    if ratio >= threshold:
+                        matched.append(keyword)
+                        break
+                else:
+                    continue
+                break
 
     return list(set(matched))
 
