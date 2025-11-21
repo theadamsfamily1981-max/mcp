@@ -68,6 +68,38 @@ The GUI opens at `http://localhost:8501` and provides:
 
 ## Installation
 
+### Easy Installation (Recommended)
+
+Use the provided installation scripts:
+
+```bash
+# Linux/Mac
+./install.sh
+
+# Windows (Command Prompt)
+install.bat
+
+# Windows (PowerShell)
+.\install.ps1
+```
+
+### Python 3.13 Compatibility Note
+
+If you're using Python 3.13, some optional dependencies (pandas, fuzzywuzzy) may not install due to C extension compatibility. The scraper will work fine without them! If automatic installation fails, use this manual workaround:
+
+```bash
+# Create and activate virtual environment
+python3 -m venv venv
+source venv/bin/activate  # Linux/Mac
+
+# Install core packages (skip problematic ones)
+pip install httpx beautifulsoup4 lxml parsel selenium sqlalchemy aiosqlite fake-useragent rich click pyyaml python-dotenv requests streamlit plotly asyncio-throttle
+
+# The scraper will work perfectly without pandas and fuzzywuzzy!
+```
+
+### Manual Installation
+
 ```bash
 # Clone and enter directory
 cd pc_parts_scraper
