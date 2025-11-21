@@ -161,19 +161,62 @@ elif page == "Run Scraper":
 
         # Quick presets
         preset = st.radio("Quick Select:",
-                         ["All Sources", "SOMs/FPGAs Only", "GPUs Only", "Custom"],
-                         horizontal=True)
+                         ["All Sources (40+!)", "SOMs/FPGAs Only", "GPUs Only",
+                          "International (Cheap!)", "Forums Only", "Universities",
+                          "Surplus/Industrial", "Custom"],
+                         horizontal=False)
 
         if preset == "Custom":
-            # Source selection
-            sources_to_scrape = st.multiselect(
-                "Choose sources:",
-                ["ebay", "ebay_vintage", "govplanet", "publicsurplus",
-                 "liquidation", "woot", "newegg", "mercari", "offerup"],
-                default=["ebay", "govplanet"]
-            )
+            # Organized source selection by category
+            st.markdown("#### Select Sources by Category:")
+
+            with st.expander("🛒 USA Marketplaces"):
+                usa_sources = st.multiselect("",
+                    ["ebay", "ebay_vintage", "mercari", "offerup", "craigslist",
+                     "amazon", "newegg", "woot", "microcenter"],
+                    key="usa")
+
+            with st.expander("🏛️ Government & Surplus"):
+                surplus_sources = st.multiselect("",
+                    ["govplanet", "publicsurplus", "propertyroom", "liquidation"],
+                    key="surplus")
+
+            with st.expander("💬 Forums (ServeTheHome, Reddit, etc.)"):
+                forum_sources = st.multiselect("",
+                    ["sth", "reddit", "hardforum", "tpu"],
+                    key="forums")
+
+            with st.expander("🎓 Universities (MIT, Stanford, etc.)"):
+                uni_sources = st.multiselect("",
+                    ["mit", "stanford", "berkeley", "uw"],
+                    key="unis")
+
+            with st.expander("🌍 International (Yahoo JP, Poland, etc.)"):
+                intl_sources = st.multiselect("",
+                    ["yahoojp", "allegro", "marktplaats", "leboncoin"],
+                    key="intl")
+
+            with st.expander("🏭 Industrial & Auctions"):
+                industrial_sources = st.multiselect("",
+                    ["bidonequipment", "assetnation", "machinerytrader"],
+                    key="industrial")
+
+            with st.expander("⚡ Electronics Surplus"):
+                electronics_sources = st.multiselect("",
+                    ["allelectronics", "goldmine", "bgmicro", "hamradio"],
+                    key="electronics")
+
+            with st.expander("💰 Pawn Shops & Recyclers"):
+                pawn_sources = st.multiselect("",
+                    ["pawnguru", "freegeek", "ewaste", "facebook"],
+                    key="pawn")
+
+            # Combine all selected sources
+            sources_to_scrape = (usa_sources + surplus_sources + forum_sources +
+                               uni_sources + intl_sources + industrial_sources +
+                               electronics_sources + pawn_sources)
         else:
-            sources_to_scrape = None  # Will use all or filtered
+            sources_to_scrape = None  # Will use preset filter
 
     with col2:
         st.subheader("Options")
@@ -196,23 +239,59 @@ elif page == "Run Scraper":
     # Run button
     if st.button("🚀 Start Scraping", type="primary", use_container_width=True):
 
-        # Determine which scrapers to use
+        # Determine which scrapers to use based on preset
         if preset == "SOMs/FPGAs Only":
             keywords = keywords or [
                 "zu3eg", "zu7ev", "trenz", "alinx", "ultra96", "kria k26",
-                "alveo", "virtex", "stratix", "fpga"
+                "alveo", "virtex", "stratix", "fpga", "zynq", "vcu1525"
             ]
+            # Use all scrapers but with FPGA keywords
+            scrapers = get_all_scrapers()
+
         elif preset == "GPUs Only":
             keywords = keywords or [
-                "tesla", "quadro", "titan", "instinct", "a100", "h100"
+                "tesla", "quadro", "titan", "instinct", "a100", "h100",
+                "v100", "rtx", "datacenter gpu"
             ]
+            scrapers = get_all_scrapers()
 
-        # Get scrapers
-        if sources_to_scrape:
-            scrapers = [get_scraper_by_name(s, config) for s in sources_to_scrape
-                       if get_scraper_by_name(s, config)]
+        elif preset == "International (Cheap!)":
+            # Only international sources
+            sources_to_scrape = ["yahoojp", "allegro", "marktplaats", "leboncoin"]
+            scrapers = [get_scraper_by_name(s) for s in sources_to_scrape
+                       if get_scraper_by_name(s)]
+            st.info("💰 Searching international sites where prices are 50-80% lower!")
+
+        elif preset == "Forums Only":
+            # Only forum marketplaces
+            sources_to_scrape = ["sth", "reddit", "hardforum", "tpu"]
+            scrapers = [get_scraper_by_name(s) for s in sources_to_scrape
+                       if get_scraper_by_name(s)]
+            st.info("💬 Searching enthusiast forums for underpriced gear!")
+
+        elif preset == "Universities":
+            # Only university surplus
+            sources_to_scrape = ["mit", "stanford", "berkeley", "uw"]
+            scrapers = [get_scraper_by_name(s) for s in sources_to_scrape
+                       if get_scraper_by_name(s)]
+            st.info("🎓 Searching university surplus for research equipment!")
+
+        elif preset == "Surplus/Industrial":
+            # Government and industrial
+            sources_to_scrape = ["govplanet", "publicsurplus", "bidonequipment",
+                               "assetnation", "machinerytrader"]
+            scrapers = [get_scraper_by_name(s) for s in sources_to_scrape
+                       if get_scraper_by_name(s)]
+            st.info("🏭 Searching liquidations and industrial auctions!")
+
+        elif preset == "Custom" and sources_to_scrape:
+            # Custom selection
+            scrapers = [get_scraper_by_name(s) for s in sources_to_scrape
+                       if get_scraper_by_name(s)]
         else:
-            scrapers = get_all_scrapers(config)
+            # All sources (40+!)
+            scrapers = get_all_scrapers()
+            st.info("🌎 Searching 40+ sources worldwide - this may take a while!")
 
         if not scrapers:
             st.error("No valid scrapers selected!")
