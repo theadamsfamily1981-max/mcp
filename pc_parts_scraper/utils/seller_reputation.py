@@ -7,7 +7,7 @@ whitelist/blacklist for automated filtering.
 
 import json
 import logging
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Optional, Set, Tuple
 from datetime import datetime
 from pathlib import Path
 from dataclasses import dataclass, asdict

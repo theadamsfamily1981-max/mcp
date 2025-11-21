@@ -32,7 +32,7 @@ imagehash==4.3.1
 
 # Proxy & Anti-Detection
 fake-useragent==1.5.1
-rotating-proxies==0.1.0
+# rotating-proxies==0.1.0  # Not available, using manual proxy rotation
 
 # CLI & Config
 click==8.1.7
