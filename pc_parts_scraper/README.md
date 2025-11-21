@@ -12,6 +12,38 @@ An advanced web scraper for finding rare, vintage, and forgotten PC parts across
 - **Alert System** - Discord, Slack, and email notifications for rare finds
 - **SQLite Database** - Persistent storage with powerful search capabilities
 - **Rich CLI** - Beautiful terminal interface with tables and progress indicators
+- **🆕 Web GUI** - Modern browser-based interface with charts, filters, and real-time scraping
+
+## Web GUI (Recommended for Beginners)
+
+The easiest way to use the scraper is through the web interface:
+
+```bash
+# Linux/Mac
+./run_gui.sh
+
+# Windows
+run_gui.bat
+
+# Or directly:
+streamlit run web_gui.py
+```
+
+The GUI opens at `http://localhost:8501` and provides:
+
+- **📊 Dashboard** - Visual stats, charts, and recent activity
+- **🚀 Run Scraper** - Click buttons to start scraping (no commands needed!)
+- **🔍 Search Parts** - Interactive filters for keywords, price, category, rarity
+- **⭐ Rare Finds** - Browse high-value items sorted by rarity
+- **🆕 Recent Items** - See what was just found
+- **⏰ Ending Auctions** - Track auctions ending soon
+- **⚙️ Settings** - Configure alerts and manage database
+
+**Perfect for:**
+- First-time users who want a simple interface
+- Monitoring scraping progress in real-time
+- Quickly filtering and browsing results
+- Setting up alerts without editing config files
 
 ## Supported Sources
 
