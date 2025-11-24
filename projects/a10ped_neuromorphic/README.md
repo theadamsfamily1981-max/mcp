@@ -306,6 +306,8 @@ else:
 
 - **[ML_ECOSYSTEM_OVERVIEW.md](docs/ML_ECOSYSTEM_OVERVIEW.md)** - Unified overview of all three ML layers
 - **[ML_ASSISTED_BITSTREAM_ANALYSIS.md](docs/ML_ASSISTED_BITSTREAM_ANALYSIS.md)** - Layer 1: Reverse engineering legacy boards
+- **[ML_BITSTREAM_ANALYSIS_SYSTEM.md](docs/ML_BITSTREAM_ANALYSIS_SYSTEM.md)** - Production implementation guide
+- **[BITSTREAM_ANALYSIS_RESEARCH_FINDINGS.md](docs/BITSTREAM_ANALYSIS_RESEARCH_FINDINGS.md)** - Research conclusions and validation
 - **[GNN_LOGIC_OPTIMIZATION.md](docs/GNN_LOGIC_OPTIMIZATION.md)** - Layer 3: Graph neural networks for synthesis
 - **[INTEGRATION_ML_YAML_ARCHITECTURE.md](docs/INTEGRATION_ML_YAML_ARCHITECTURE.md)** - How ML and YAML work together
 
@@ -320,6 +322,7 @@ else:
 - **[flows/quartus/a10ped/](flows/quartus/a10ped/)** - Automated Quartus build scripts
 - **[tools/validate/](tools/validate/)** - YAML validation tools
 - **[tools/parse_reports/](tools/parse_reports/)** - Timing and utilization parsers
+- **[tools/bitstream_analysis/](tools/bitstream_analysis/)** - Algorithmic width detection and bitstream analysis
 
 ### Figures and Diagrams
 
