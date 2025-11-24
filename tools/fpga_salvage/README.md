@@ -63,10 +63,11 @@ sudo ./scripts/pmic_flasher.py --bus 0 --preset safe
 
 ### Cryptocurrency Mining FPGAs
 - **Intel Stratix 10** (10SX/10GX): `--vendor stratix10`
+- **Intel Arria 10** (GX/SX): `--vendor arria10` 🆕
 - **Xilinx Virtex UltraScale+** (VU9P/VU13P): `--vendor virtex`
 - **Xilinx Kintex UltraScale+** (KU5P/KU15P): `--vendor kintex`
 
-### Mining Hashboards 🔥 NEW!
+### Mining Hashboards 🔥
 - **4x Agilex Hashboards** (Linzhi Phoenix, Chinese miners): `--vendor hashboard-agilex`
   - 4 chips in JTAG chain: **5.6M logic cells total!**
   - 128GB DDR4, perfect for massive SNN models
@@ -76,15 +77,32 @@ sudo ./scripts/pmic_flasher.py --bus 0 --preset safe
   - PCIe Gen3/4 interface, 64GB DDR4
   - Cost: $500-1,200 (vs $6,000 new)
 
+### Enterprise PCIe Accelerators 🆕
+- **BittWare A10PED** (Dual Arria 10 GX1150): `--vendor bittware-a10ped`
+  - 2x FPGAs, 32GB DDR4, PCIe Gen3 x8
+  - Perfect for AI inference with OpenCL/OpenVINO
+  - Cost: $800-2,000 used (vs $4,000-8,000 new)
+  - **See:** [Arria 10 Salvage Guide](../../docs/ARRIA10_SALVAGE_GUIDE.md) 📖
+
 ### ATCA Telecom Boards
 - **ATCA Virtex-7** (Emerson, Radisys, Mercury): `--vendor atca-virtex7`
 - **ATCA Virtex-6** (Kontron, older boards): `--vendor atca-virtex6`
 - **ATCA Stratix IV/V** (NAT Semi, Mercury): `--vendor atca-stratix4`
 - **ATCA Arria 10** (Advantech, Trenton): `--vendor atca-arria10`
 
+### 🔥 EXTREME TIER (Advanced Users Only) 🔥
+- **Superscalar K10 / COL Engine P2** (1700W mining beasts)
+  - Likely VU37P, Stratix 10 GX2800, or Agilex AGF027
+  - **Extreme difficulty**: Security lockouts, 1700W power, intensive reverse engineering
+  - Cost: $2,000-5,000 used (vs $35,000-60,000 new FPGA)
+  - **⚠️ HIGH RISK**: Requires advanced skills, industrial power, potential hardware destruction
+  - **See:** [K10/P2 Extreme Guide](../../docs/K10_P2_EXTREME_SALVAGE_GUIDE.md) ⚡
+
 **What is a Hashboard?** The compute module from a cryptocurrency miner - typically 2-4 high-end FPGAs on one board. Mining crash = incredible deals!
 
 **What is ATCA?** Advanced Telecommunications Computing Architecture - enterprise telecom boards with powerful FPGAs. Decommissioned boards sell for $200-$2,000 vs $10,000-$50,000 new!
+
+**What is Extreme Tier?** Ultra-high-end mining FPGAs (1700W+) requiring reverse engineering, industrial power, and advanced expertise. Only for experienced FPGA engineers willing to accept high financial and safety risks.
 
 ## Directory Structure
 
@@ -99,10 +117,12 @@ fpga_salvage/
 │   └── README.md            # AI automation docs
 ├── configs/                 # OpenOCD JTAG configurations
 │   ├── stratix10.cfg
+│   ├── arria10_bittware_a10ped.cfg  ← NEW (Arria 10 dual-FPGA)
 │   ├── virtex_ultrascale.cfg
 │   ├── kintex_ultrascale.cfg
-│   ├── hashboard_agilex.cfg         ← NEW (4x Agilex hashboards)
-│   ├── pcie_mining_card.cfg         ← NEW (VU33P/VU35P/VU37P)
+│   ├── hashboard_agilex.cfg         (4x Agilex hashboards)
+│   ├── pcie_mining_card.cfg         (VU33P/VU35P/VU37P)
+│   ├── superscalar_k10_extreme.cfg  ← NEW (K10/P2 extreme tier)
 │   ├── atca_xilinx.cfg
 │   └── atca_altera.cfg
 ├── gui/                     # Web interface
@@ -308,16 +328,33 @@ Found a bug? Have a mining board we don't support?
 
 ## Resources
 
+### Salvage Guides
 - **Mining FPGA Guide**: [docs/FPGA_SALVAGE_GUIDE.md](../../docs/FPGA_SALVAGE_GUIDE.md)
-- **Hashboard Guide**: [docs/HASHBOARD_SALVAGE_GUIDE.md](../../docs/HASHBOARD_SALVAGE_GUIDE.md) 🔥 NEW!
+- **Hashboard Guide**: [docs/HASHBOARD_SALVAGE_GUIDE.md](../../docs/HASHBOARD_SALVAGE_GUIDE.md)
+- **Arria 10 Guide**: [docs/ARRIA10_SALVAGE_GUIDE.md](../../docs/ARRIA10_SALVAGE_GUIDE.md) 🆕
+  - BittWare A10PED dual-FPGA cards
+  - OpenCL + OpenVINO deployment
+  - Open source project integration
 - **ATCA Board Guide**: [docs/ATCA_SALVAGE_GUIDE.md](../../docs/ATCA_SALVAGE_GUIDE.md)
-- **Hardware Adapters**: [hardware/](hardware/) 🔧 NEW!
+- **K10/P2 Extreme Guide**: [docs/K10_P2_EXTREME_SALVAGE_GUIDE.md](../../docs/K10_P2_EXTREME_SALVAGE_GUIDE.md) ⚡
+  - **⚠️ Advanced only** - 1700W, reverse engineering required
+  - Security exploitation, industrial power, high risk
+
+### Hardware & AI
+- **Hardware Adapters**: [hardware/](hardware/)
   - JTAG breakout boards
   - Power adapters for hashboards
   - Multi-chip JTAG splitters
   - PCB designs + schematics
+- **AI Workload Examples**: [examples/fpga_ai_workloads/](../../examples/fpga_ai_workloads/)
+  - SNN accelerators, CNN engines, GNN, transformers
+  - Full source code + build scripts
+  - Performance benchmarks vs GPU
+
+### Technical Docs
 - **API Documentation**: [docs/API_GUIDE.md](../../docs/API_GUIDE.md)
 - **Architecture**: [docs/ARCHITECTURE.md](../../docs/ARCHITECTURE.md)
+- **Business Roadmap**: [docs/NEXT_LEVEL_ROADMAP.md](../../docs/NEXT_LEVEL_ROADMAP.md)
 
 ## License
 
