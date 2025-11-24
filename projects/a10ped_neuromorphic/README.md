@@ -1,15 +1,19 @@
 # A10PED Neuromorphic AI Tile
 
-**Repurposing the BittWare A10PED as a production-grade neuromorphic compute platform**
+**Part of the Heterogeneous Neuromorphic Tile Fabric (HNTF)**
 
 ## Overview
 
-This project transforms the BittWare A10PED dual-FPGA PCIe card into a reusable "AI tile" for spiking neural networks (SNNs), topological field networks, and neuromorphic architectures. The design emphasizes:
+This project transforms the BittWare A10PED dual-FPGA PCIe card into a reusable "AI tile" for spiking neural networks (SNNs), topological field networks, and neuromorphic architectures. The A10PED serves as a **Tier 3 computational core** within the HNTF architecture—a modular system that composes heterogeneous FPGA tiles (Lattice ECP5 for edge processing, Intel Stratix V for routing, Intel Arria 10 for compute) into a scalable neuromorphic cluster.
 
+**Key Features**:
 - **Clean host-FPGA ABI**: Simple register-based command protocol
 - **Portable architecture**: Core logic vendor-agnostic, easily retargeted
 - **Hybrid toolchain**: Quartus backend, open tools + AI assistance for everything else
+- **ML-assisted development**: GNN optimization, bitstream analysis
 - **Production-ready**: From research prototype to reliable accelerator
+
+**For the complete HNTF architecture**, see: [`docs/HNTF_OVERVIEW.md`](docs/HNTF_OVERVIEW.md)
 
 ## Hardware
 
@@ -290,6 +294,37 @@ else:
     print(f"Error: {status}")
 ```
 
+## Documentation
+
+### HNTF Architecture
+
+- **[HNTF_OVERVIEW.md](docs/HNTF_OVERVIEW.md)** - One-page overview of the Heterogeneous Neuromorphic Tile Fabric
+- **[LIMITATIONS_AND_FUTURE_WORK.md](docs/LIMITATIONS_AND_FUTURE_WORK.md)** - Current constraints and research roadmap
+- **[README_ARCH.md](README_ARCH.md)** - YAML-driven build system architecture
+
+### Machine Learning Integration
+
+- **[ML_ECOSYSTEM_OVERVIEW.md](docs/ML_ECOSYSTEM_OVERVIEW.md)** - Unified overview of all three ML layers
+- **[ML_ASSISTED_BITSTREAM_ANALYSIS.md](docs/ML_ASSISTED_BITSTREAM_ANALYSIS.md)** - Layer 1: Reverse engineering legacy boards
+- **[GNN_LOGIC_OPTIMIZATION.md](docs/GNN_LOGIC_OPTIMIZATION.md)** - Layer 3: Graph neural networks for synthesis
+- **[INTEGRATION_ML_YAML_ARCHITECTURE.md](docs/INTEGRATION_ML_YAML_ARCHITECTURE.md)** - How ML and YAML work together
+
+### Technical Specifications
+
+- **[abi/ai_tile_registers.yaml](abi/ai_tile_registers.yaml)** - Complete register map (single source of truth)
+- **[specs/tiles/a10ped_tile.yaml](specs/tiles/a10ped_tile.yaml)** - A10PED tile specification
+- **[specs/boards/a10ped_board.yaml](specs/boards/a10ped_board.yaml)** - Board-level pin/clock configuration
+
+### Build and Validation Tools
+
+- **[flows/quartus/a10ped/](flows/quartus/a10ped/)** - Automated Quartus build scripts
+- **[tools/validate/](tools/validate/)** - YAML validation tools
+- **[tools/parse_reports/](tools/parse_reports/)** - Timing and utilization parsers
+
+### Figures and Diagrams
+
+- **[docs/figures/ml_bitstream_analysis_flow.md](docs/figures/ml_bitstream_analysis_flow.md)** - ML-assisted RE workflow diagrams
+
 ## Contributing
 
 This is a research project. Contributions welcome in:
@@ -298,6 +333,8 @@ This is a research project. Contributions welcome in:
 - **Host driver improvements** (OPAE integration, async I/O)
 - **SNN models** (new architectures, datasets)
 - **Documentation** (guides, tutorials, papers)
+- **ML models** (CNN classifiers, GNN optimizers, training datasets)
+- **Hardware validation** (test on real boards, report results)
 
 **See:** `docs/CONTRIBUTING.md`
 
@@ -305,12 +342,16 @@ This is a research project. Contributions welcome in:
 
 If you use this work in research, please cite:
 
-```
-@misc{a10ped_neuromorphic,
-  title={A10PED Neuromorphic AI Tile: A $120 Platform for Production Neuromorphic Computing},
-  author={[Your Name]},
-  year={2024},
-  howpublished={\url{https://github.com/[your-repo]/a10ped_neuromorphic}}
+```bibtex
+@misc{hntf_a10ped_2025,
+  title={Heterogeneous Neuromorphic Tile Fabric:
+         Building SNN Systems from Decommissioned Datacenter Hardware},
+  author={Quanta Hardware Project Contributors},
+  year={2025},
+  howpublished={\url{https://github.com/user/quanta-hw}},
+  note={A10PED Neuromorphic AI Tile - Tier 3 computational core
+        using Intel Arria 10 GX1150 FPGAs with YAML-driven architecture
+        and ML-assisted optimization}
 }
 ```
 
