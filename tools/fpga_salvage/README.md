@@ -355,6 +355,11 @@ Found a bug? Have a mining board we don't support?
 - **API Documentation**: [docs/API_GUIDE.md](../../docs/API_GUIDE.md)
 - **Architecture**: [docs/ARCHITECTURE.md](../../docs/ARCHITECTURE.md)
 - **Business Roadmap**: [docs/NEXT_LEVEL_ROADMAP.md](../../docs/NEXT_LEVEL_ROADMAP.md)
+- **AI-Assisted Development**: [docs/AI_ASSISTED_DEVELOPMENT.md](../../docs/AI_ASSISTED_DEVELOPMENT.md) 🆕
+  - Using Claude Code, Copilot, and LLMs for FPGA development
+  - 2-5x development speed improvements
+  - Code generation examples (OPAE, OpenVINO, JTAG debugging)
+  - Prompt engineering for FPGA projects
 
 ## License
 
