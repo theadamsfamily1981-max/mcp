@@ -4,6 +4,26 @@ Get the system running in 15 minutes.
 
 ---
 
+## 🎨 GUI Available!
+
+**NEW**: A modern graphical interface is now available for easy-to-use operation!
+
+```bash
+# Launch the GUI
+python run_gui.py
+```
+
+Features:
+- 📊 **Preprocessing tab** with automatic width detection
+- 🤖 **Training tab** with real-time curves
+- 🔍 **Inference tab** with visual results
+- ⚡ **Side-channel tab** for power trace analysis
+- 🌙 **Dark/light themes** (Ctrl+T to toggle)
+
+See `gui/README.md` for full GUI documentation.
+
+---
+
 ## Prerequisites
 
 - **Python 3.8+** with pip
